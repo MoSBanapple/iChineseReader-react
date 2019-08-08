@@ -1,0 +1,232 @@
+body {font-family: Arial, Helvetica, sans-serif;}
+form {border: 3px solid #f1f1f1;}
+
+.homeBody{
+	background: url("./images/launchscreen.png");
+	background-size: 100% 1080px;
+	background-repeat: no-repeat;
+	height: 1080px;
+}
+
+
+
+.topBoard {
+	background: transparent;
+	position: relative;
+	padding: 15px;
+	color: #53AF42;
+	font-size: 11px;
+	text-align: center;
+} 
+
+#boardImg {
+	position: absolute;
+	top: 15px;
+	left: 50%;
+	margin-left: -150px;
+}
+
+#nameText {
+	position: absolute;
+	top: 23px;
+	left: 50%;
+	margin-left: -115px;
+}
+
+#currentPointsText {
+	position: absolute;
+	top: 23px;
+	left: 50%;
+	margin-left: -40px;
+}
+
+#booksReadText {
+	position: absolute;
+	top: 23px;
+	left: 50%;
+	margin-left: 65px;
+}
+
+#levelText{
+	position: absolute;
+	top: 90px;
+	left: 50%;
+	margin-left: -110px;
+}
+
+#levelFont { font-size:200%; }
+
+#mailButton{
+	position: absolute;
+	top: 70px;
+	left: 50%;
+	margin-left: 67px;
+	background: transparent;
+	outline: none;
+    border: none;
+	width: 54px;
+	height: 50px;
+}
+
+
+.assignment{
+	background: url("./images/assign-btn-sprite.png") no-repeat;
+	position: absolute;
+	cursor: pointer;
+	top: 230px;
+	left: 50%;
+	margin-left: -6.5%;
+	width: 13%;
+	height: 28%;
+	zoom: 0.6;
+	background-size: 1500% 100%;
+	
+}
+
+.assignment:hover{
+	animation: play15s 1.5s steps(15) infinite;
+}
+
+@keyframes playAssignment {
+    100% { background-position: 111.15%; }
+}
+
+
+
+
+.messageDisplayButton {
+}
+
+.myLibrary{
+	position: absolute;
+	top: 590px;
+	left: 16%;
+	width: 16%;
+	height: 29%;
+	background: url("./images/btn_mylibrary_sprite.png") no-repeat;
+	zoom: calc(0.6);
+	background-size: 1000% 100%;
+	cursor: pointer;
+}
+.myLibrary:hover{
+	animation: play10s 1s steps(10) infinite;
+}
+
+.openReading{
+	background: url("./images/LandingPage_OpenReading_2732x1536_spritesheet.png") no-repeat;
+	position: absolute;
+	top: 590px;
+	right: 16%;
+	width: 15%;
+	height: 29%;
+	background-size: 1000% 100%;
+	zoom: 0.6;
+	cursor: pointer;
+}
+
+.openReading:hover{
+	animation: play10s 1s steps(10) infinite;
+}
+
+.progressReading{
+	background: url("./images/progressReading.png") no-repeat;
+	position: absolute;
+	cursor: pointer;
+	top: 770px;
+	left: 50%;
+	margin-left: -7%;
+	width: 14%;
+	height: 26%;
+	zoom: 0.6;
+	background-size: 1300% 100%;
+}
+
+.progressReading:hover{
+	animation: play13s 1s steps(13) infinite;
+}
+
+.startButton{
+	background: url("./images/LandingPage_StartButton_2732x1536_spritesheet.png") no-repeat;
+	position: absolute;
+	cursor: pointer;
+	top: 800px;
+	left: 50%;
+	margin-left: -8%;
+	width: 16%;
+	height: 29%;
+	background-size: 1500% 100%;
+}
+
+.startButton:hover{
+	animation: play15s 1.5s steps(15) infinite;
+}
+
+.logoutButton{
+	background: url("./images/LandingPage_DontPush_2732x1536_spritesheet.png") no-repeat;
+	position: absolute;
+	cursor: pointer;
+	top: 890px;
+	left: 8%;
+	width: 9%;
+	height: 13%;
+	background-size: 1500% 100%;
+}
+
+.logoutButton:hover{
+	animation: play15s 1.5s steps(15) infinite;
+}
+
+.reportButton{
+	background: url("./images/btn_report_sprite.png") no-repeat;
+	position: absolute;
+	cursor: pointer;
+	top: 930px;
+	left: 33%;
+	width: 9%;
+	height: 12%;
+	background-size: 1300% 100%;
+}
+
+.reportButton:hover{
+	animation: play13s 1.5s steps(13) infinite;
+}
+
+.profileButton{
+	background: url("./images/btn_profile_sprite.png") no-repeat;
+	position: absolute;
+	cursor: pointer;
+	top: 940px;
+	right: 33%;
+	width: 9%;
+	height: 11%;
+	background-size: 1300% 100%;
+}
+
+.profileButton:hover{
+	animation: play13s 1.5s steps(13) infinite;
+}
+
+#faqImage{
+	position: absolute;
+	cursor: pointer;
+	top: 990px;
+	right: 27%;
+}
+
+
+@keyframes play10s {
+    100% { background-position: 111.15%; }
+}
+
+@keyframes play13s {
+	100% { background-position: 108.35%; }
+}
+
+@keyframes play15s {
+	100% { background-position: 107.2%; }
+}
+
+
+
+
+

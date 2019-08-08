@@ -1,0 +1,26 @@
+.bookView{
+	display: inline-block;
+	padding: 30px;
+}
+
+.bookCover{
+	display: inline-block;
+}
+
+.iconCol{
+	width: 60px;
+	text-align: center;
+	display: inline-block;
+}
+
+.iconCol img{
+	width: 48px;
+}
+
+div.libraryView{
+	text-align: center;
+	margin-left: 10%;
+	width:80%;
+
+	position: relative;
+}

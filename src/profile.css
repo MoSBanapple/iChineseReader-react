@@ -1,0 +1,34 @@
+body {font-family: Arial, Helvetica, sans-serif;}
+form {border: 3px solid #f1f1f1;}
+
+
+
+.infoIds{
+	position: absolute;
+	top: 370px;
+	text-align: right;
+	color: white;
+	margin-right:55%;
+	right: 0;
+	line-height: 40px;
+}
+
+.infoFields{
+	position: absolute;
+	top: 370px;
+	text-align: left;
+	color: white;
+	margin-left: 48%;
+	line-height: 40px;
+}
+
+
+
+
+.updateProfileButton{
+	position: absolute;
+	top: 850px;
+	left: 45%;
+}
+
+
