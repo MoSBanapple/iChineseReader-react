@@ -10,3 +10,7 @@ export function makeRequest(type, targetUrl, auth, postBody, returnFunc){
 	request.setRequestHeader("AuthToken", auth);
 	request.send(postBody);
 };
+
+export function isNumber(n) {
+  return !isNaN(parseFloat(n)) && isFinite(n);
+}

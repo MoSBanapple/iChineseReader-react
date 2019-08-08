@@ -18,6 +18,14 @@ class BookView extends React.Component {
 		
 	};
 	
+	onSelectBook = (e) => {
+		if (e.target.checked){
+			this.props.selectedBooks.push(this.props.bookId);
+		} else {
+			this.props.selectedBooks.splice(this.props.selectedBooks.indexOf(this.props.bookId), 1);
+		}
+	};
+	
 	render () {
 		var icons = [];
 		for (let i = 0; i < this.props.icons.length; i++){
@@ -27,8 +35,9 @@ class BookView extends React.Component {
 			<div className="bookView">
 				<div className="iconCol">
 					{icons}
+					<input type="checkbox" onChange={this.onSelectBook}/>
 				</div>
-				<a href="https://www.google.com">
+				<a href={this.props.contentLink}>
 				<img className = "bookCover" src={this.props.cover} alt = {"Cover of " + this.props.title}/>
 				</a>
 				<p>{this.props.title}</p>
@@ -65,7 +74,13 @@ export default class LibraryView extends React.Component {
 			} else {
 				icons.push(off_star);
 			}
-			return(<BookView cover={thisBook.book.bookImageLink} icons={icons} title={thisBook.book.bookTitle}/>);
+			return(<BookView cover={thisBook.book.bookImageLink} 
+				icons={icons} 
+				title={thisBook.book.bookTitle} 
+				bookId={thisBook.book.bookId} 
+				selectedBooks={this.props.selectedBooks}
+				contentLink={thisBook.book.bookContentLink}
+			/>);
 		});
 		return (
 			<div className="libraryView">
