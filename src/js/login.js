@@ -1,9 +1,8 @@
     import React from "react";
-	import './login.css';
+	import '../css/login.css';
 	import { Link, Redirect } from 'react-router-dom'
 	import cookie from 'react-cookies';
 	import {BASE_URL} from './common';
-	import LibraryView from './libraryView'
 
     export default class Login extends React.Component {
 

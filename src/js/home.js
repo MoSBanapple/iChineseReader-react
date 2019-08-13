@@ -1,11 +1,11 @@
     import React from "react";
-	import './common.css';
-	import './home.css';
-	import scoreboard from "./images/icn_landingpage_scoreboard.png";
+	import '../css/common.css';
+	import '../css/home.css';
+	import scoreboard from "../images/icn_landingpage_scoreboard.png";
 	import Modal from 'react-modal';
 	import cookie from 'react-cookies';
 	import { Link, Redirect } from 'react-router-dom';
-	import faqImg from "./images/btn_landingpage_faq.png";
+	import faqImg from "../images/btn_landingpage_faq.png";
 	import {BASE_URL, makeRequest} from './common';
 	
 	Modal.setAppElement('#root');
@@ -235,15 +235,21 @@
 				<button onClick={this.hideModal}>closeThis</button>
 			</Modal>
 			
-			<div className="assignment" onClick = {this.assignmentClick}/>
+			<a href="/assignment">
+			<div className="assignment"/>
+			</a>
 			
-			<div className="myLibrary" onClick={this.myLibraryClick}/>
+			<a href="/mylibrary">
+			<div className="myLibrary"/>
+			</a>
 			
 			<a href="/openreading">
 			<div className="openReading"/>
 			</a>
 			
-			<div className="progressReading" onClick={this.progressReadingClick}/>
+			<a href="/progressreading">
+			<div className="progressReading"/>
+			</a>
 			
 			<a href = "https://ichinesereader.com/game">
 			<div className="startButton"/>

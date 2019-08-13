@@ -5,6 +5,7 @@ import Home from './home'
 import Profile from './profile'
 import Report from './report'
 import OpenReading from './openReading'
+import BookContainer from './bookContainer'
 
 export default function App() {
   return (
@@ -14,6 +15,10 @@ export default function App() {
 	  <Route path="/profile" component={Profile} />
 	  <Route path="/report" component={Report} />
 	  <Route path="/openreading" component={OpenReading} />
+	  <Route path="/test" component={BookContainer} />
+	  <Route path="/progressreading" component={OpenReading} />
+	  <Route path="/mylibrary" component={OpenReading} />
+	  <Route path="/assignment" component={OpenReading} />
     </Switch>
   )
 }

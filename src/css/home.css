@@ -2,7 +2,7 @@ body {font-family: Arial, Helvetica, sans-serif;}
 form {border: 3px solid #f1f1f1;}
 
 .homeBody{
-	background: url("./images/launchscreen.png");
+	background: url("../images/launchscreen.png");
 	background-size: 100% 1080px;
 	background-repeat: no-repeat;
 	height: 1080px;
@@ -70,7 +70,7 @@ form {border: 3px solid #f1f1f1;}
 
 
 .assignment{
-	background: url("./images/assign-btn-sprite.png") no-repeat;
+	background: url("../images/assign-btn-sprite.png") no-repeat;
 	position: absolute;
 	cursor: pointer;
 	top: 230px;
@@ -103,7 +103,7 @@ form {border: 3px solid #f1f1f1;}
 	left: 16%;
 	width: 16%;
 	height: 29%;
-	background: url("./images/btn_mylibrary_sprite.png") no-repeat;
+	background: url("../images/btn_mylibrary_sprite.png") no-repeat;
 	zoom: calc(0.6);
 	background-size: 1000% 100%;
 	cursor: pointer;
@@ -113,7 +113,7 @@ form {border: 3px solid #f1f1f1;}
 }
 
 .openReading{
-	background: url("./images/LandingPage_OpenReading_2732x1536_spritesheet.png") no-repeat;
+	background: url("../images/LandingPage_OpenReading_2732x1536_spritesheet.png") no-repeat;
 	position: absolute;
 	top: 590px;
 	right: 16%;
@@ -129,7 +129,7 @@ form {border: 3px solid #f1f1f1;}
 }
 
 .progressReading{
-	background: url("./images/progressReading.png") no-repeat;
+	background: url("../images/progressReading.png") no-repeat;
 	position: absolute;
 	cursor: pointer;
 	top: 770px;
@@ -146,7 +146,7 @@ form {border: 3px solid #f1f1f1;}
 }
 
 .startButton{
-	background: url("./images/LandingPage_StartButton_2732x1536_spritesheet.png") no-repeat;
+	background: url("../images/LandingPage_StartButton_2732x1536_spritesheet.png") no-repeat;
 	position: absolute;
 	cursor: pointer;
 	top: 800px;
@@ -162,7 +162,7 @@ form {border: 3px solid #f1f1f1;}
 }
 
 .logoutButton{
-	background: url("./images/LandingPage_DontPush_2732x1536_spritesheet.png") no-repeat;
+	background: url("../images/LandingPage_DontPush_2732x1536_spritesheet.png") no-repeat;
 	position: absolute;
 	cursor: pointer;
 	top: 890px;
@@ -177,7 +177,7 @@ form {border: 3px solid #f1f1f1;}
 }
 
 .reportButton{
-	background: url("./images/btn_report_sprite.png") no-repeat;
+	background: url("../images/btn_report_sprite.png") no-repeat;
 	position: absolute;
 	cursor: pointer;
 	top: 930px;
@@ -192,7 +192,7 @@ form {border: 3px solid #f1f1f1;}
 }
 
 .profileButton{
-	background: url("./images/btn_profile_sprite.png") no-repeat;
+	background: url("../images/btn_profile_sprite.png") no-repeat;
 	position: absolute;
 	cursor: pointer;
 	top: 940px;

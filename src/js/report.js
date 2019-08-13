@@ -1,15 +1,15 @@
 import React from "react";
-import './common.css'
-import './report.css'
+import '../css/common.css'
+import '../css/report.css'
 import Modal from 'react-modal';
 import cookie from 'react-cookies';
-import back_btn from './images/back-button.png';
+import back_btn from '../images/back-button.png';
 import { Link, Redirect } from 'react-router-dom';
-import switch_off from './images/btn_switch_off.png';
-import switch_on from './images/btn_switch_selected.png';
-import tab_on from './images/btn_tab_selected.png';
-import tab_off from './images/btn_tab_unselected.png';
-import {BASE_URL} from './constants';
+import switch_off from '../images/btn_switch_off.png';
+import switch_on from '../images/btn_switch_selected.png';
+import tab_on from '../images/btn_tab_selected.png';
+import tab_off from '../images/btn_tab_unselected.png';
+import {BASE_URL} from './common';
 
 export default class Report extends React.Component{
 	constructor(props){
