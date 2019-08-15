@@ -56,35 +56,13 @@ form {border: 3px solid #f1f1f1;}
 	font-size: 30px;
 }
 
-
-.searchInput{
-	position: absolute;
-	top: 42px;
-	left: 170px;
-}
-
-.filterBar{
-	background: url("../images/bg_filter_search_bar.png");
-	vertical-align: center;
-	position: relative;
-	width: 100%;
-	height: 108px;
-}
-
-.filterButton{
-	position: absolute;
-	top: 30px;
-	left: 10px;
+.assignmentInfoButton{
+	display: inline-block;
+	zoom: 50%;
 }
 
 
-.filterHeadText{
-	position: absolute;
-	top: 36px;
-	left: 75px;
-	color: white;
-	font-size: 200%;
-}
+
 
 .assignmentSelection{
 	position: relative;

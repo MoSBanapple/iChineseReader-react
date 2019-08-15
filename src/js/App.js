@@ -6,6 +6,8 @@ import Profile from './profile'
 import Report from './report'
 import OpenReading from './openReading'
 import BookContainer from './bookContainer'
+import AssignmentSelection from './assignmentSelection'
+import QuizController from './quizController'
 
 export default function App() {
   return (
@@ -18,7 +20,10 @@ export default function App() {
 	  <Route path="/test" component={BookContainer} />
 	  <Route path="/progressreading" component={OpenReading} />
 	  <Route path="/mylibrary" component={OpenReading} />
-	  <Route path="/assignment" component={OpenReading} />
+	  <Route exact path="/assignment" component={AssignmentSelection} />
+	  <Route path="/assignment/:id" component={OpenReading} />
+	  <Route exact path="/quiz/:id" component={QuizController}/>
+	  <Route exact path="/quiz/:assignid/:id" component={QuizController}/>
     </Switch>
   )
 }

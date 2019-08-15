@@ -79,7 +79,7 @@ export default class LibraryView extends React.Component {
 				title={thisBook.book.bookTitle} 
 				bookId={thisBook.book.bookId} 
 				selectedBooks={this.props.selectedBooks}
-				contentLink={thisBook.book.bookContentLink}
+				contentLink={"/quiz/" + thisBook.book.bookId}
 			/>);
 		});
 		return (

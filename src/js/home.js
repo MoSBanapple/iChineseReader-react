@@ -266,7 +266,7 @@
 			<div className="profileButton"/>
 			</a>
 			<div className="faqButton">
-				<a href="https://ichinesereader.com//resource/">
+				<a href="http://cms.ichinesereader.com/resource/">
 					<img id="faqImage" src={faqImg}/>
 				</a>
 			</div>

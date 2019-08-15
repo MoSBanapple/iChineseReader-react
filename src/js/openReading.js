@@ -10,6 +10,7 @@ import { Link, Redirect } from 'react-router-dom';
 import filter_button from '../images/btn_hamburger_menu.png';
 import folder_button from '../images/addtomylibrary.png';
 import { ProgressBar } from "react-bootstrap";
+import help_btn from '../images/help-btn.png';
 
 export default class OpenReading extends React.Component{
 	constructor(props){
@@ -37,6 +38,10 @@ export default class OpenReading extends React.Component{
 				headerName="Assignment";
 				break;
 		}
+		if (this.props.location.pathname.split("/")[1] == "assignment"){
+			headerName = "Assignment";
+		}
+		
 		
 		this.state={
 			userInfo: info,
@@ -70,9 +75,10 @@ export default class OpenReading extends React.Component{
 			createFolderName: "",
 			showEditFolder: false,
 			editFolderName: "",
-			assignments: [],
-			currentAssignment: 0,
-			currentClass: 0,
+			assignmentInfo: null,
+			assignmentId: this.props.match.params.id,
+			classId: cookie.load('classId', {doNotParse: true}),
+			showAssignmentInstructions: false,
 		};
 		this.retrieveProfileInfo();
 		this.retrieveTextTypes();
@@ -114,11 +120,9 @@ export default class OpenReading extends React.Component{
 			this.setState({
 				profileInfo: parsed,
 			}, function () {
-				if (this.props.location.pathname == "/assignment"){
-					this.retrieveAssignments();
-				} else {
+
 					this.retrieveFolders();
-				}
+
 			});
 		}.bind(this)
 		let url = BASE_URL + "/usermanager/profile"; 
@@ -127,31 +131,7 @@ export default class OpenReading extends React.Component{
 		request.send(null);
 	};
 	
-	retrieveAssignments(){
-		let auth = this.getUserInfo().authToken;
-		var asy = true;
-		var request = new XMLHttpRequest();
-		request.onload = function () {
-			var parsed = JSON.parse(request.responseText);
-			if (request.status != 200){
-				alert("Retrieve assignments failed: " + request.responseText);
-				this.setState({userInfo: undefined});
-				return;
-			}
-			console.log(request.responseText);
-			
-			this.setState({
-				assignments: parsed,
-			}, function () {
-				this.retrieveFolders();
-			});
-		}.bind(this)
-		let url = BASE_URL + "/schoolmanager/liveassignments/" + this.state.profileInfo.classResps[this.state.currentClass].classId; 
-		request.open("GET", url, asy);
-		request.setRequestHeader("AuthToken", auth);
-		request.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-		request.send(null);
-	};
+
 	
 
 	
@@ -172,8 +152,9 @@ export default class OpenReading extends React.Component{
 				this.setState({
 					books: parsed.books,
 				});
-			} else if (this.props.location.pathname == "/assignment") {
+			} else if (this.props.location.pathname.split("/")[1] == "assignment") {
 				this.setState({
+					assignmentInfo: parsed,
 					books: parsed.bookProgress,
 				});
 			} else {
@@ -181,6 +162,7 @@ export default class OpenReading extends React.Component{
 					books: parsed,
 				});
 			}
+			this.retrieveTotalBooks();
 		}.bind(this)
 		let currentPath = this.props.location.pathname;
 		let url;
@@ -188,14 +170,10 @@ export default class OpenReading extends React.Component{
 			url = BASE_URL + "/superadmin" + currentPath + "?limit=" + numBooks + "&page=" + pageNum; 
 		} else if (currentPath == "/mylibrary"){
 			url = BASE_URL + "/studentmanager/folder/filter/" + this.state.folders[this.state.currentFolder].id;
-		} else if (currentPath == "/assignment"){
-			if (this.state.assignments.length == 0){
-				this.setState({books: []});
-				return;
-			}
+		} else if (this.state.assignmentId != undefined) {
 			url = BASE_URL + "/schoolmanager/myassignments/" 
-				+ this.state.profileInfo.classResps[this.state.currentClass].classId + "/"
-				+ this.state.assignments[this.state.currentAssignment].assignment.id;
+				+ this.state.classId + "/"
+				+ this.state.assignmentId;
 		}
 		request.open("POST", url, asy);
 		request.setRequestHeader("AuthToken", auth);
@@ -227,6 +205,11 @@ export default class OpenReading extends React.Component{
 		} else if (currentPath == "/mylibrary"){
 			this.setState({
 				totalBooks: this.state.folders[this.state.currentFolder].bookCount,
+			});
+			return;
+		} else if (this.state.assignmentId != undefined){
+			this.setState({
+				totalBooks: this.state.assignmentInfo.assignment.numBooks,
 			});
 			return;
 		}
@@ -352,7 +335,7 @@ export default class OpenReading extends React.Component{
 				folders: parsed.allFolder,
 			}, () => {
 				this.retrieveBooks(20, this.state.currentPage);
-				this.retrieveTotalBooks();
+				
 			});
 		}.bind(this)
 		let url = BASE_URL + "/studentmanager/folderlist"; 
@@ -510,6 +493,9 @@ export default class OpenReading extends React.Component{
 	renderPageSelect(){
 		let totalPages = Math.ceil((this.state.totalBooks*1.0)/20.0);
 		var output = [];
+		if (this.props.location.pathname.split("/")[1] == "assignment" || this.props.location.pathname == "/mylibrary"){
+			return output;
+		}
 		if (this.props.location.pathname == '/assignment'){
 			return output;
 		}
@@ -782,35 +768,7 @@ export default class OpenReading extends React.Component{
 		this.hideEditFolder();
 	};
 	
-	renderAssignmentSelections(){
-		let output = [];
-		if (this.props.location.pathname != "/assignment" || this.state.profileInfo == undefined){
 
-			return output;
-		}
-
-		let classOptions = this.state.profileInfo.classResps.map((targetClass, index) => {
-			if (index == this.state.currentClass){
-				return (<option selected value={index} >{targetClass.className}</option>);
-			} else {
-				return (<option value={index}>{targetClass.className}</option>);
-			}
-		});
-		let assignmentOptions = this.state.assignments.map((targetAssign, index) => {
-			if (index == this.state.currentAssignment){
-				return (<option selected value={index} >{targetAssign.assignment.name + "  " + targetAssign.overallProgress}%</option>);
-			} else {
-				return (<option value={index}>{targetAssign.assignment.name + "  " + targetAssign.overallProgress}%</option>);
-			}
-		});
-		output.push(
-			<div className="assignmentSelection">
-				<select onChange={this.onSelectClass}>{classOptions}</select>
-				<select onChange={this.onSelectAssignment}>{assignmentOptions}</select>
-			</div>
-		);
-		return output;
-	};
 	
 	onSelectClass = (event) => {
 		this.setState({
@@ -827,6 +785,51 @@ export default class OpenReading extends React.Component{
 		});
 	};
 	
+	getBackLink() {
+		if (this.props.location.pathname.split("/")[1] == "assignment"){
+			return "/assignment";
+		} else {
+			return "/home";
+		}
+	};
+	
+	showAssignmentInstructionWindow = () => {
+		this.setState({showAssignmentInstructions: true,});
+	};
+	
+	hideAssignmentInstructions = () => {
+		this.setState({showAssignmentInstructions: false,});
+	};
+	
+	renderAssignmentInfo(){
+		let output = [];
+		if (this.props.location.pathname.split("/")[1] != "assignment"){
+			return output;
+		}
+		let dueDate = new Date(this.state.assignmentInfo.assignment.endDate);
+		output.push(
+			<div className="progressContainer">
+				{this.state.assignmentInfo.assignment.name} &nbsp;
+				<img className="assignmentInfoButton" onClick={this.showAssignmentInstructionWindow} src={help_btn}/>
+				<br/>
+				Due by {dueDate.toLocaleDateString("en-US")} &nbsp; &nbsp;
+					{this.state.assignmentInfo.overallProgress}% &nbsp; &nbsp;
+					Required books: {this.state.assignmentInfo.assignment.noOfBookToBeRead}
+				<Modal 
+					className="standardModal" 
+					isOpen={this.state.showAssignmentInstructions} 
+					onRequestClose={this.hideAssignmentInstructons}
+					shouldCloseOnOverlayClick={true}
+					contentLabel={"ablong"}
+				>
+				{this.state.assignmentInfo.assignment.instruction}<br/>
+				<button onClick={this.hideAssignmentInstructions}>Close</button>
+				</Modal>
+			</div>
+		);
+		return output;
+	};
+	
 	render() {
 		if (this.state.userInfo == undefined){
 			return <Redirect push to = {{
@@ -839,7 +842,7 @@ export default class OpenReading extends React.Component{
 		return (
 			<body className="profileReportBody">
 				<div className="topBar">
-					<a href="/home">
+					<a href={this.getBackLink()}>
 						<img className="backButton" src={back_btn}/>
 					</a>
 					<div className="topBarText">{this.state.header}</div>
@@ -853,8 +856,8 @@ export default class OpenReading extends React.Component{
 					<img className="folderButton" onClick={this.folderButtonClicked} src={folder_button}/>
 					</div>
 					{this.renderLibraryStuff()}
-					{this.renderAssignmentSelections()}
 				</div>
+				
 				
 				<Modal 
 					className="standardModal" 
@@ -862,7 +865,6 @@ export default class OpenReading extends React.Component{
 					onRequestClose={this.hideFilters} 
 					contentLabel={"ablong"}
 				>
-
 				{this.renderCheckboxes()}
 				<button onClick={this.hideFilters}>closeThis</button>
 				</Modal>
@@ -902,6 +904,7 @@ export default class OpenReading extends React.Component{
 				
 				</Modal>
 				{this.renderProgressInfo()}
+				{this.renderAssignmentInfo()}
 				<LibraryView bookList={this.state.books} selectedBooks={this.state.selectedBooks}/>
 				<div className="pageSelect">{this.renderPageSelect()}</div>
 			</body>
