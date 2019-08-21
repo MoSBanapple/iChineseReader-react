@@ -1,16 +1,30 @@
 .bookView{
 	display: inline-block;
 	padding: 30px;
+	
 }
 
 .bookCover{
 	display: inline-block;
+	position: relative;
+	background: url("../images/icn_book_container.png");
+	background-repeat: none;
+	height: 186px;
+	width: 140px;
+}
+
+.bookImage{
+	zoom: 83%;
+	position: relative;
+	top: 13px;
 }
 
 .iconCol{
 	width: 60px;
 	text-align: center;
 	display: inline-block;
+	top: 20px;
+	position: relative;
 }
 
 .iconCol img{
@@ -21,6 +35,16 @@ div.libraryView{
 	text-align: center;
 	margin-left: 10%;
 	width:80%;
-
 	position: relative;
+	
+
+	
+}
+
+.newBanner{
+	position: absolute;
+top: 10px;
+width: 85px;
+height: 50px;
+left: 5px;
 }

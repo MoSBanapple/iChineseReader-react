@@ -17,13 +17,14 @@ export default function App() {
 	  <Route path="/profile" component={Profile} />
 	  <Route path="/report" component={Report} />
 	  <Route path="/openreading" component={OpenReading} />
-	  <Route path="/test" component={BookContainer} />
 	  <Route path="/progressreading" component={OpenReading} />
 	  <Route path="/mylibrary" component={OpenReading} />
 	  <Route exact path="/assignment" component={AssignmentSelection} />
 	  <Route path="/assignment/:id" component={OpenReading} />
 	  <Route exact path="/quiz/:id" component={QuizController}/>
 	  <Route exact path="/quiz/:assignid/:id" component={QuizController}/>
+	  <Route exact path="/book/:id" component={BookContainer}/>
+	  <Route exact path="/book/:assignid/:id" component={BookContainer}/>
     </Switch>
   )
 }

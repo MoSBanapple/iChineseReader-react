@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7" />
+    <meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"> 
+    <title>Book</title>
+    <!--[if lt IE 9]><script src="https://html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+    <link rel="stylesheet" href="../css/foundation.min.css" />
+<link rel="stylesheet" type="text/css" href="../css/slick.css"/>
+<link rel="stylesheet" type="text/css" href="../css/lbook.css"/>
+
+<style>
+body {
+	background: #ccc;
+	font: normal 12px/1.2 arial, verdana, sans-serif;
+	position: relative;
+}
+#content-wrapper {
+	width: 1024px;
+	height: 728px;
+	overflow: hidden;
+	margin: 0 auto;
+	position: relative;
+}
+#book-wrapper {
+	width: 1024px;
+	height: 728px;
+}
+#content-frame {
+	width: 1024px;
+	height: 728px;
+	border: none;
+	overflow: hidden;
+}
+.menu-wrapper {
+	width: 1024px;
+	margin: 0 auto;
+	position: absolute;
+	top: -231px;
+}
+.menu {
+	position: relative;
+	z-index: 1005;
+	width: 1024px;
+	margin: 0 auto;
+	transform: translate(0, 0px);
+	transition: all .5s;
+	-moz-transform: translate(0, 0px);
+	-moz-transition: all .5s;
+	-o-transform: translate(0, 0px);
+	-o-transition: all .5s;
+	-ms-transform: translate(0, 0px);
+	-ms-transition: all .5s;
+	-webkit-transform: translate(0, 0px);
+	-webkit-transition: all .5s;
+}
+.menu.open {
+	transform: translate(0, 231px);
+	-moz-transform: translate(0, 231px);
+	-o-transform: translate(0, 231px);
+	-ms-transform: translate(0, 231px);
+	-webkit-transform: translate(0, 231px);
+}
+#menu-off {
+	position: absolute;
+	width: 1024px;
+	height: 100%;
+	top: 0;
+	z-index: 1004;
+	background-color: rgba(0, 0, 0, .6);
+	opacity: 0;
+	visibility: hidden;
+	transition: visibility 0s linear .5s, all .5s;
+	-moz-transition: visibility 0s linear .5s, all .5s;
+	-webkit-transition: visibility 0s linear .5s, all .5s;
+	-o-transition: visibility 0s linear .5s, all .5s;
+	-ms-transition: visibility 0s linear .5s, all .5s;
+}
+#menu-off.fade {
+	opacity: 1;
+	visibility: visible;
+}
+.tab-bar {
+	height: 45px;
+	width: 100%;
+	background: linear-gradient(#488, #6cc);
+	background: -webkit-linear-gradient(#488, #6cc);
+	background: -moz-linear-gradient(#488, #6cc);
+	background: -o-linear-gradient(#488, #6cc);
+	line-height: normal;
+}
+.tab-bar .middle {
+	height: 45px;
+}
+.tar-bar .left-small, .tab-bar .right-small {
+	height: 45px;
+}
+.tab-bar .left-small {
+	border-right: 1px solid white;
+}
+.tab-bar .right-small {
+	border-left: 1px solid white;
+}
+.tab-bar .middle .title {
+	display: inline-block;
+}
+.tab-bar-section {
+	padding: 0 !important;
+}
+.pagination {
+	text-align: center;
+	height: 100%;
+	float: right;
+	border-left: 1px solid white;
+}
+.pagination a {
+	padding: 0 !important;
+	border: none !important;
+}
+.pagination a, .pagination input {
+	display: inline-block !important;
+}
+.pagination #first-page, .pagination #last-page {
+	width: 2.7rem;
+	height: 2.7rem;
+	text-align: center;
+	background-repeat: no-repeat;
+	margin: .1rem;
+}
+.pagination #page-number {
+	width: 5rem;
+	height: 1.5rem;
+	vertical-align: top;
+	margin-top: .6rem;
+	margin-right: .1rem;
+	padding: 0;
+	text-align: center;
+}
+.pagination #first-page {
+	background-image: url('../css/images/first.png');
+}
+.pagination #last-page {
+	background-image: url('../css/images/last.png');
+}
+
+#text-toggle {
+	display: block;
+	background-image: url('../css/images/text.png');
+}
+#text-simp {
+	display: inline-block;
+	background-image: url('../css/images/simp.png');
+	margin: auto 5px;
+}
+#text-trad {
+	display: inline-block;
+	background-image: url('../css/images/trad.png');
+	margin: auto 5px;
+}
+#text-pinyin {
+	display: block;
+	background-image: url('../css/images/pinyin.png');
+}
+#bgm-toggle {
+	display: inline-block;
+	width: 60px;
+	height: 45px;
+	text-align: center;
+	background-image: url('../css/images/music_on.png');
+	background-repeat: no-repeat;
+	padding: 5px;
+	background-position: center;
+	border-left: 1px solid #fff;
+}
+.bgm-off {
+	background-image: url('../css/images/music_off.png') !important;
+}
+#audio-toggle {
+	display: inline-block;
+	width: 60px;
+	height: 45px;
+	text-align: center;
+	background-image: url('../css/images/text_on.png');
+	background-repeat: no-repeat;
+	padding: 5px;
+	background-position: center;
+	border-left: 1px solid #fff;
+}
+.audio-off {
+	background-image: url('../css/images/text_off.png') !important;
+}
+#autoplay-toggle {
+	display: inline-block;
+	width: 60px;
+	height: 45px;
+	text-align: center;
+	background-image: url('../css/images/autoplay_on.png');
+	background-repeat: no-repeat;
+	padding: 5px;
+	background-position: center;
+	border-left: 1px solid #fff;
+}
+.autoplay-off {
+	background-image: url('../css/images/text_off.png') !important;
+}
+#dict-toggle {
+	display: inline-block;
+	width: 60px;
+	height: 45px;
+	text-align: center;
+	background-image: url('../css/images/dict_on.png');
+	background-repeat: no-repeat;
+	padding: 5px;
+	background-position: center;
+	border-left: 1px solid #fff;
+}
+.dict-off {
+	background-image: url('../css/images/text_off.png') !important;
+}
+#fullscreen {
+	display: inline-block;
+	width: 40px;
+	height: 40px;
+	padding: 5px;
+	text-align: center;
+	background-image: url('../css/images/enter.png');
+	background-size: 35px auto;
+	background-repeat: no-repeat;
+	background-position: center;
+}
+.fs-exit {
+	background-image: url('../css/images/exit.png') !important;
+}
+#settings {
+	width: 100%;
+	height:230px;
+	background-color: #666;
+}
+#settings ul {
+	list-style-type: none;
+}
+#settings li {
+	display: inline;
+}
+#settings .op-item a {
+	height: 45px;
+	width: 45px;
+}
+#settings .opt-icons {
+	background-size: 40px;
+	background-repeat: no-repeat;
+	border: none;
+}
+#settings .opt-sep {
+	border-left: 1px solid #fff;
+}
+#main-section {
+	position: relative;
+	top: 43px;
+	width: 100%;
+	height: 100%;
+}
+.hide {
+	display: none;
+}
+.slick-disabled {
+	display: none !important;
+}
+.a-disabled {
+	pointer-events: none;
+}
+div.words, div.words>div {
+	font-size: 36px;
+	float: left;
+}
+</style>
+<script>
+function launchFullScreen(element) {
+	if(element.requestFullscreen) {
+		element.requestFullscreen();
+	} else if(element.mozRequestFullScreen) {
+		element.mozRequestFullScreen();
+	} else if(element.webkitRequestFullscreen) {
+		element.webkitRequestFullscreen();
+	} else if(element.msRequestFullscreen) {
+		element.msRequestFullscreen();
+	}
+}
+function exitFullScreen() {
+  if(document.exitFullscreen) {
+    document.exitFullscreen();
+  } else if(document.mozCancelFullScreen) {
+    document.mozCancelFullScreen();
+  } else if(document.webkitExitFullscreen) {
+    document.webkitExitFullscreen();
+  } else if(document.msExitFullscreen) {
+    document.msExitFullscreen();
+  }
+}
+</script>
+</head>
+<body>
+<div id="content-wrapper">
+<div id="book-wrapper">
+	<iframe src="content.html" id="content-frame"></iframe>
+</div>
+	<a id="menu-off"></a>
+	<div class="menu-wrapper">
+	  <div class="menu">
+		   
+	  <div id="settings">
+      <ul>
+		<li><a href="#" id="bgm-toggle" class='opt-icons'><span></span></a><span class='opt-sep'></span>
+        <a href="#" id="audio-toggle" class='opt-icons'><span></span></a><span class='opt-sep'></span>
+        <a href="#" id="autoplay-toggle" class='opt-icons'><span></span></a>
+</li>
+		<li class="op-item"><a href="#" id="text-toggle" class='opt-icons'><span></span></a></li>
+        <li class="op-item"><div class="op-item-grp"><a href="#" id="text-simp" class='opt-icons'><span></span></a><span class='opt-sep'></span><a href="#" id="text-trad" class='opt-icons'><span></span></a></div></li>
+        <li class="op-item"><a href="#" id="text-pinyin" class='opt-icons'><span></span></a></li>
+        <li class="op-item"><a href="#" id="dict-toggle" class='opt-icons'><span></span></a></li>
+      </ul>
+    </div>
+    <nav class="tab-bar">
+      <section class="left-small tab-bar-section">
+        <a class="menu-icon" id="menu-icon" href="#"><span></span></a>
+      </section>
+
+      <section class="middle tab-bar-section">
+		<div class="pagination"><a id="first-page"><span></span></a><input type="text" id="page-number" value="" /><a id="last-page"><span></span></a></div>
+		  <h1 class="title"><span id='book-title'></span></h1>
+      </section>
+
+      <section class="right-small tan-bar-section">
+        <a href="#" id="fullscreen"><span></span></a>
+      </section>
+
+    </nav>
+
+  </div>
+	</div>
+</div>
+<script src="../js/modernizr.js"></script>
+<script src="../js/fastclick.js"></script>
+<script src="../js/jquery.min.js"></script>
+<script src="../js/foundation.min.js"></script>
+<script src="../js/foundation.reveal.js"></script>
+<script src="../js/slick.min.js"></script>
+
+<script>
+	var frm = $('#content-frame')[0].contentWindow;
+	var sbookTitle = '';
+	var tbookTitle = '';
+	var isPreset = false;
+	var bgmToggle = false;
+	var readToggle = true;
+	var autoplayToggle = false;
+	var textToggle = true;
+	var textDisplay = 's';
+	var textPinyin = false;
+	var dictToggle = false;
+	var isPassed = true;
+	var pageNum = {};
+
+	var updatePage = function(page, total) {
+console.log('update-'+page+"=="+total);
+		pageNum['page'] = page;
+		pageNum['total'] = total;
+		$('#page-number').val((pageNum['page']) + "/" + pageNum['total']);
+	};
+
+	$(window).load(function() {
+		FastClick.attach(document.body);
+
+        if(typeof frm.init !== 'undefined'){
+            frm.init(sbookTitle, tbookTitle, bgmToggle, readToggle, autoplayToggle, textToggle, textDisplay, textPinyin, dictToggle);
+        }
+
+
+		$('#page-number')
+		.on('focusin', function() {
+			$('#page-number').val('');
+		})
+		.on('focusout', function() {
+			$('#page-number').val((pageNum['page']) + "/" + pageNum['total']);
+		})
+		.on('change', function() {
+			frm.gotoPage($('#page-number').val());
+//			$('#page-number').val($('#page-number').val() + "/" + pageNum['total']);
+		});
+
+		if (!bgmToggle) $('#bgm-toggle').addClass('bgm-off');
+		if (!readToggle) $('#audio-toggle').addClass('audio-off');
+		if (!autoplayToggle) $('#autoplay-toggle').addClass('autoplay-off');
+		if (!textToggle) $('#text-toggle').addClass('text-off');
+		switch(textDisplay) {
+			case 't':
+				$('#text-simp').removeClass('simp-on');
+				$('#text-trad').addClass('trad-on');
+				break;
+			default:
+				$('#text-simp').addClass('simp-on');
+				$('#text-trad').removeClass('trad-on');
+		}
+		if (!textPinyin) $('#text-pinyin').addClass('pinyin-off');
+		if (!dictToggle) $('#dict-toggle').addClass('dict-off');
+		if (!isPassed) {
+			$('.pagination').hide();
+		}
+
+		if (isPreset) {
+			$('#settings a').addClass('a-disabled');
+		}
+
+	$(document).foundation();
+
+	$('#menu-icon').on('click', function() {
+		$('.menu').toggleClass('open');
+		$('#menu-off').toggleClass('fade');
+	});
+
+	$('#menu-off').on('click', function() {
+		$('.menu').removeClass('open');
+		$('#menu-off').removeClass('fade');
+	});
+
+	$('#first-page').on('click', function() {
+		frm.goFirstPage();
+	});
+	$('#last-page').on('click', function() {
+		frm.goLastPage();
+	});
+
+	$('#text-toggle').on('click', function() {
+		if ($(this).hasClass('text-off')) {
+			$(this).removeClass('text-off');
+			frm.showText(textDisplay);
+		} else {
+			$(this).addClass('text-off');
+			frm.hideText();
+		}
+	});
+	$('#text-pinyin').on('click', function() {
+		if ($(this).hasClass('pinyin-off')) {
+			$(this).removeClass('pinyin-off');
+			frm.showPinyin();
+		} else {
+			$(this).addClass('pinyin-off');
+			frm.hidePinyin();
+		}
+	});
+	$('#text-simp').on('click', function() {
+		var ret = frm.changeText('s');
+		textDisplay = ret['display'];
+		textToggle = ret['toggle'];
+	});
+	$('#text-trad').on('click', function() {
+		var ret = frm.changeText('t');
+		textDisplay = ret['display'];
+		textToggle = ret['toggle'];
+	});
+	$('#bgm-toggle').on('click', function() {
+		if ($(this).hasClass('bgm-off')) {
+			$(this).removeClass('bgm-off');
+			frm.bgmOn();
+		} else {
+			$(this).addClass('bgm-off');
+			frm.bgmOff();
+		}
+	});
+	$('#audio-toggle').on('click', function() {
+		if ($(this).hasClass('audio-off')) {
+			$(this).removeClass('audio-off');
+			frm.readOn();
+		} else {
+			$(this).addClass('audio-off');
+			frm.readOff();
+		}
+	});
+	$('#autoplay-toggle').on('click', function() {
+		if ($(this).hasClass('autoplay-off')) {
+			$(this).removeClass('autoplay-off');
+			frm.autoplayOn();
+		} else {
+			$(this).addClass('autoplay-off');
+			frm.autoplayOff();
+		}
+	});
+	$('#dict-toggle').on('click', function() {
+		if($(this).hasClass('dict-off')) {
+			$(this).removeClass('dict-off');
+			frm.showDict();
+		} else {
+			$(this).addClass('dict-off');
+			frm.hideDict();
+		}
+	});
+	$('#fullscreen').on('click', function() {
+		if ($(this).hasClass('fs-exit')) {
+			$(this).removeClass('fs-exit');
+			exitFullScreen();
+		} else {
+			$(this).addClass('fs-exit');
+			launchFullScreen(document.getElementById('content-wrapper'));
+		}
+	});
+			
+});
+</script>
+</body>
+</html>

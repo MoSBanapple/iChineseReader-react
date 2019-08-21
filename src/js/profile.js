@@ -8,6 +8,7 @@
 	import switch_off from '../images/btn_switch_off.png';
 	import switch_on from '../images/btn_switch_selected.png';
 	import {BASE_URL} from './common';
+	import AvatarModule from './avatarModule'
 
 	export default class Profile extends React.Component {
 		constructor(props){
@@ -199,6 +200,7 @@
 					<img src={this.state.dictButton} onClick = {this.dictChange}/><br/>
 				</div>
 				<button className="updateProfileButton" onClick = {this.updateClick}>Update</button>
+				
 			</body>
 			);
 		}

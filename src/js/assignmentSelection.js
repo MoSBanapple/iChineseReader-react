@@ -11,6 +11,7 @@ import folder_button from '../images/addtomylibrary.png';
 import { ProgressBar } from "react-bootstrap";
 import assignment_incomplete from '../images/assignment_folder.png';
 import assignment_complete from '../images/completedAssignmentFolder.png';
+import AvatarModule from './avatarModule';
 
 export default class AssignmentSelection extends React.Component{
 	constructor(props){
@@ -136,9 +137,15 @@ export default class AssignmentSelection extends React.Component{
 			</div>
 			);
 		});
-		output.push(
-			<div className="assignmentView">{assignmentIcons}</div>
-		);
+		if (assignmentIcons.length > 0){
+			output.push(
+				<div className="assignmentView">{assignmentIcons}</div>
+			);
+		} else {
+			output.push(
+				<div className="assignmentView">No assignments found</div>
+			);
+		}
 		return output;
 	};
 	
@@ -178,6 +185,7 @@ export default class AssignmentSelection extends React.Component{
 					<input onChange={this.searchFieldChanged}/>
 					<button onClick={this.searchButtonClicked}>Search</button>
 					</div>
+					<AvatarModule authToken={this.getUserInfo().authToken} profileInfo = {this.state.profileInfo}/>
 				</div>
 				{this.renderAssignments()}
 			</body>

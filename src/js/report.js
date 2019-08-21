@@ -10,6 +10,7 @@ import switch_on from '../images/btn_switch_selected.png';
 import tab_on from '../images/btn_tab_selected.png';
 import tab_off from '../images/btn_tab_unselected.png';
 import {BASE_URL} from './common';
+import LibraryView from './libraryView';
 
 export default class Report extends React.Component{
 	constructor(props){
@@ -33,13 +34,16 @@ export default class Report extends React.Component{
 			assignmentTab: tab_on,
 			badgeTab: tab_off,
 			leaderboardTab: tab_off,
+			lastReadTab: tab_off,
 			worldBoard: null,
 			currentClass: null,
 			classBoard: null,
 			assignments: null,
+			lastRead: null,
 		}
 		this.retrieveProfileInfo();
 		this.retrieveWorldboardInfo();
+		this.retrieveLastRead();
 		
 	};
 	
@@ -143,6 +147,28 @@ export default class Report extends React.Component{
 		request.send(null);
 	};
 	
+	retrieveLastRead(){
+		let auth = this.getUserInfo().authToken;
+		var asy = true;
+		var request = new XMLHttpRequest();
+		request.onload = function () {
+			
+			var parsed = JSON.parse(request.responseText);
+			if (request.status != 200){
+				alert("lastRead error: " + request.responseText);
+				return;
+			}
+			
+			this.setState({
+				lastRead: parsed,
+			});
+		}.bind(this)
+		let url = BASE_URL + "/superadmin/history"; 
+		request.open("GET", url, asy);
+		request.setRequestHeader("AuthToken", auth);
+		request.send(null);
+	};
+	
 	
 	setTab(target){
 		this.setState({
@@ -150,6 +176,7 @@ export default class Report extends React.Component{
 			assignmentTab: tab_off,
 			leaderboardTab: tab_off,
 			badgeTab: tab_off,
+			lastReadTab: tab_off,
 		});
 		if (target == "Assignment"){
 			this.setState({assignmentTab: tab_on});
@@ -157,6 +184,8 @@ export default class Report extends React.Component{
 			this.setState({badgeTab: tab_on});
 		} else if (target == "Leaderboard"){
 			this.setState({leaderboardTab: tab_on});
+		} else if (target == "Last read"){
+			this.setState({lastReadTab: tab_on});
 		}
 	};
 	
@@ -282,8 +311,7 @@ export default class Report extends React.Component{
 				</table>
 			</div>
 			);
-		}
-		else if (this.state.currentTab == "Leaderboard"){
+		} else if (this.state.currentTab == "Leaderboard"){
 			tabContents = (
 			<div className="tabContents">
 				<div className="worldBoardView">
@@ -311,6 +339,14 @@ export default class Report extends React.Component{
 				</div>
 			</div>
 			);
+		} else if (this.state.currentTab == "Last read"){
+			if (this.state.lastRead == null){
+				tabContents = null;
+			}
+			tabContents = (
+			<div className="tabContents">
+				<LibraryView bookList={this.state.lastRead} noCheck={true}/>
+			</div>);
 		}
 		return (
 			<body className="profileReportBody">
@@ -336,6 +372,10 @@ export default class Report extends React.Component{
 					<div className="reportTab">
 					<img src={this.state.leaderboardTab} onClick={() => this.setTab("Leaderboard")}/>
 					<div className="tabText">Leaderboard</div>
+					</div>
+					<div className="reportTab">
+					<img src={this.state.lastReadTab} onClick={() => this.setTab("Last read")}/>
+					<div className="tabText">Last Read</div>
 					</div>
 					<hr className="tabLine"/>
 				</div>

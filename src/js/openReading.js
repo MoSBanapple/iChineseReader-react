@@ -11,6 +11,7 @@ import filter_button from '../images/btn_hamburger_menu.png';
 import folder_button from '../images/addtomylibrary.png';
 import { ProgressBar } from "react-bootstrap";
 import help_btn from '../images/help-btn.png';
+import AvatarModule from './avatarModule';
 
 export default class OpenReading extends React.Component{
 	constructor(props){
@@ -115,7 +116,7 @@ export default class OpenReading extends React.Component{
 				this.setState({userInfo: undefined});
 				return;
 			}
-			console.log(request.responseText);
+
 			
 			this.setState({
 				profileInfo: parsed,
@@ -147,7 +148,6 @@ export default class OpenReading extends React.Component{
 				this.setState({userInfo: undefined});
 				return;
 			}
-			console.log(request.responseText);
 			if (this.props.location.pathname == "/mylibrary"){
 				this.setState({
 					books: parsed.books,
@@ -228,7 +228,7 @@ export default class OpenReading extends React.Component{
 				this.setState({userInfo: undefined});
 				return;
 			}
-			console.log(request.responseText);
+
 			this.setState({
 				textType: parsed,
 			});
@@ -248,7 +248,7 @@ export default class OpenReading extends React.Component{
 				this.setState({userInfo: undefined});
 				return;
 			}
-			console.log(request.responseText);
+
 			this.setState({
 				series: parsed,
 			});
@@ -268,7 +268,6 @@ export default class OpenReading extends React.Component{
 				this.setState({userInfo: undefined});
 				return;
 			}
-			console.log("Topics: " + request.responseText);
 			this.setState({
 				topics: parsed,
 			});
@@ -288,7 +287,7 @@ export default class OpenReading extends React.Component{
 				this.setState({userInfo: undefined});
 				return;
 			}
-			console.log("Interest: " + request.responseText);
+
 			this.setState({
 				interest: parsed,
 			});
@@ -308,7 +307,7 @@ export default class OpenReading extends React.Component{
 				this.setState({userInfo: undefined});
 				return;
 			}
-			console.log("Interest: " + request.responseText);
+
 			this.setState({
 				programTypes: parsed,
 			});
@@ -330,7 +329,6 @@ export default class OpenReading extends React.Component{
 				this.setState({userInfo: undefined});
 				return;
 			}
-			console.log(request.responseText);
 			this.setState({
 				folders: parsed.allFolder,
 			}, () => {
@@ -441,7 +439,6 @@ export default class OpenReading extends React.Component{
 				);
 			}
 		}
-		console.log(this.state.topics);
 		output.push(<h2>Topics</h2>);
 		for (const topic of this.state.topics){
 			output.push(
@@ -507,10 +504,16 @@ export default class OpenReading extends React.Component{
 			output.push(<span className="unchosenPage" onClick={() => this.onPageSelect(0)}>{"«"} &nbsp; </span>);
 			output.push(<span className="unchosenPage" onClick={() => this.onPageSelect(this.state.currentPage-1)}>{"<"} &nbsp; </span>);
 		}
-		for (let i = this.state.currentPage-2; i <= this.state.currentPage+2; i++){
-			if (i < 0 || i >= totalPages){
-				continue;
-			}
+		let start = this.state.currentPage-2;
+		if (start < 0){
+			start = 0;
+		}
+		let end = this.state.currentPage+2;
+		if (end >= totalPages){
+			end = totalPages-1;
+			start = end - 4;
+		}
+		for (let i = start; i <= end || i < start+5; i++){
 			if (i==this.state.currentPage){
 				output.push(<span className="chosenPage" onClick={() => this.onPageSelect(i)}>{i+1} &nbsp; </span>);
 			} else {
@@ -596,7 +599,9 @@ export default class OpenReading extends React.Component{
 		}
 		output.push(
 			<div className="progressContainer">
-				{this.state.profileInfo.playerLevel.displayName} &nbsp; &nbsp; {this.state.profileInfo.levelPercentage}%
+				{this.state.profileInfo.playerLevel.displayName} &nbsp; &nbsp; 
+				<progress className="assignmentProgress" value={this.state.profileInfo.levelPercentage} max={100}/> &nbsp;
+				{this.state.profileInfo.levelPercentage}%
 				<ProgressBar now={60}/>
 			</div>
 		);
@@ -813,6 +818,7 @@ export default class OpenReading extends React.Component{
 				<img className="assignmentInfoButton" onClick={this.showAssignmentInstructionWindow} src={help_btn}/>
 				<br/>
 				Due by {dueDate.toLocaleDateString("en-US")} &nbsp; &nbsp;
+					<progress className="assignmentProgress" value={this.state.assignmentInfo.overallProgress} max={100}/> &nbsp;
 					{this.state.assignmentInfo.overallProgress}% &nbsp; &nbsp;
 					Required books: {this.state.assignmentInfo.assignment.noOfBookToBeRead}
 				<Modal 
@@ -830,6 +836,18 @@ export default class OpenReading extends React.Component{
 		return output;
 	};
 	
+	onSelectAll = (e) => {
+		let selected = [];
+		if (e.target.checked){
+			selected = this.state.books.map(thisBook => {
+				return thisBook.book.bookId;
+			});
+		}
+		this.setState({
+			selectedBooks: selected,
+		});
+	};
+	
 	render() {
 		if (this.state.userInfo == undefined){
 			return <Redirect push to = {{
@@ -840,7 +858,7 @@ export default class OpenReading extends React.Component{
 			return null;
 		}
 		return (
-			<body className="profileReportBody">
+			<body className="openReadingBody">
 				<div className="topBar">
 					<a href={this.getBackLink()}>
 						<img className="backButton" src={back_btn}/>
@@ -853,9 +871,13 @@ export default class OpenReading extends React.Component{
 					<div className="searchInput">
 					<input onChange={this.searchFieldChanged}/>
 					<button onClick={this.searchButtonClicked}>Search</button>
+					<span className="selectAll">
+						<input type="checkbox" onChange={this.onSelectAll}/>Select all
+					</span>
 					<img className="folderButton" onClick={this.folderButtonClicked} src={folder_button}/>
 					</div>
 					{this.renderLibraryStuff()}
+					<AvatarModule authToken={this.getUserInfo().authToken} profileInfo = {this.state.profileInfo}/>
 				</div>
 				
 				
@@ -905,7 +927,11 @@ export default class OpenReading extends React.Component{
 				</Modal>
 				{this.renderProgressInfo()}
 				{this.renderAssignmentInfo()}
-				<LibraryView bookList={this.state.books} selectedBooks={this.state.selectedBooks}/>
+				<LibraryView 
+				bookList={this.state.books} 
+				selectedBooks={this.state.selectedBooks} 
+				assignment={this.state.assignmentId}
+				/>
 				<div className="pageSelect">{this.renderPageSelect()}</div>
 			</body>
 		);

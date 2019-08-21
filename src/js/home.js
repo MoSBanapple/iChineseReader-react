@@ -7,6 +7,7 @@
 	import { Link, Redirect } from 'react-router-dom';
 	import faqImg from "../images/btn_landingpage_faq.png";
 	import {BASE_URL, makeRequest} from './common';
+	import diver_points from "../images/minigame_l2_divercoin_forweb_web.png";
 	
 	Modal.setAppElement('#root');
 	
@@ -37,12 +38,22 @@
 		};
 		
 		render() {
+			let pointsDisplay = null;
+			if (this.props.points > 0 && this.state.showMessage){
+				pointsDisplay = (
+				<div>
+				<img className="diverImage" src={diver_points}/><br/>
+					{this.props.points} points earned<br/>
+					</div>
+				);
+			}
 			return (
 			<div>
 				<button className="messageDisplayButton" onClick={this.buttonClicked}>
 					{this.state.buttonText}
 				</button>{this.props.date}
 				<p>{this.state.messageText}</p>
+					{pointsDisplay}
 				</div>
 			);
 		}
@@ -61,6 +72,7 @@
 			level: null,
 			messages: [],
 			messageDates: [],
+			messagePoints: [],
 			showMessages: false,
 		}
 		if (this.state.userInfo == undefined){
@@ -112,12 +124,14 @@
 			  var parsed = JSON.parse(request.responseText);
 			  var messageList = [];
 			  var dateList = [];
+			  var pointsList = [];
 			  for (let i = 0; i < parsed.length; i++){
 				  let inserted = false;
 				  for (let j = 0; j < dateList.length; j++){
 					  if (dateList[j] < parsed[i].when){
 						  dateList.splice(j, 0, parsed[i].when);
 						  messageList.splice(j, 0, parsed[i].message);
+						  pointsList.splice(j, 0, parsed[i].point);
 						  inserted = true;
 						  break;
 					  }
@@ -125,11 +139,13 @@
 				  if (!inserted){
 					  dateList.push(parsed[i].when);
 					  messageList.push(parsed[i].message);
+					  pointsList.push(parsed[i].point);
 				  }
 			  }
 			  this.setState({
 				  messages: messageList,
 				  messageDates: dateList,
+				  messagePoints: pointsList,
 			  });
 		  }.bind(this)
 		  let url = BASE_URL + "/schoolmanager/myclassannouncement"; 
@@ -210,7 +226,7 @@
 		for (let i = 0; i < this.state.messages.length; i++){
 			let announceDate = new Date(this.state.messageDates[i]);
 			messageList.push(
-				<MessageDisplay message={this.state.messages[i]} date={announceDate.toLocaleString()}/>
+				<MessageDisplay message={this.state.messages[i]} points={this.state.messagePoints[i]} date={announceDate.toLocaleString()}/>
 				);
 		}
 
