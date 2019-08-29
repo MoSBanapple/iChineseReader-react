@@ -1,0 +1,16 @@
+/* CSS Document */
+html {
+	width: 768px;
+	height: 1024px;
+	max-width: 768px;
+	max-height: 1024px;
+}
+.columns {
+	padding: 0 !important;
+}
+
+body {
+	width: 768px;
+	height: 1024px;
+	margin: 0;
+}

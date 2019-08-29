@@ -32,3 +32,7 @@ form {border: 3px solid #f1f1f1;}
 .avatarHeader{
 	font-size: 150%;
 }
+
+.avatarProgress{
+	width: 40%;
+}

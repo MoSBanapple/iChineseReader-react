@@ -8,6 +8,7 @@
 	import faqImg from "../images/btn_landingpage_faq.png";
 	import {BASE_URL, makeRequest} from './common';
 	import diver_points from "../images/minigame_l2_divercoin_forweb_web.png";
+	import close_button from "../images/icn_incorrectanswer.png";
 	
 	Modal.setAppElement('#root');
 	
@@ -48,12 +49,14 @@
 				);
 			}
 			return (
-			<div>
-				<button className="messageDisplayButton" onClick={this.buttonClicked}>
+			<div >
+				<button className="orangeButton" onClick={this.buttonClicked}>
 					{this.state.buttonText}
-				</button>{this.props.date}
-				<p>{this.state.messageText}</p>
+				</button> &nbsp; {this.props.date}
+				<div>
+				<p >{this.state.messageText}</p>
 					{pointsDisplay}
+					</div>
 				</div>
 			);
 		}
@@ -243,12 +246,16 @@
 			
 			<Modal 
 				className="standardModal" 
+				id="messageModal"
 				isOpen={this.state.showMessages} 
 				onRequestClose={this.hideModal} 
 				contentLabel={"ablong"}
 			>
+			<div className="topBar">
+			<span className="topBarText">Announcements</span>
+			<img src={close_button} className="closeModalButton" onClick={this.hideModal}/>
+			</div>
 			{messageList}
-				<button onClick={this.hideModal}>closeThis</button>
 			</Modal>
 			
 			<a href="/assignment">

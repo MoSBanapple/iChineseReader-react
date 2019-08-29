@@ -12,6 +12,7 @@ import folder_button from '../images/addtomylibrary.png';
 import { ProgressBar } from "react-bootstrap";
 import help_btn from '../images/help-btn.png';
 import AvatarModule from './avatarModule';
+import close_button from "../images/icn_incorrectanswer.png";
 
 export default class OpenReading extends React.Component{
 	constructor(props){
@@ -24,6 +25,7 @@ export default class OpenReading extends React.Component{
 			}
 			return;
 		}
+		cookie.save('prevPage', this.props.location.pathname, { path: '/'});
 		let headerName;
 		switch(this.props.location.pathname){
 			case "/openreading":
@@ -80,6 +82,7 @@ export default class OpenReading extends React.Component{
 			assignmentId: this.props.match.params.id,
 			classId: cookie.load('classId', {doNotParse: true}),
 			showAssignmentInstructions: false,
+			selectedTabs: [],
 		};
 		this.retrieveProfileInfo();
 		this.retrieveTextTypes();
@@ -145,7 +148,7 @@ export default class OpenReading extends React.Component{
 			var parsed = JSON.parse(request.responseText);
 			if (request.status != 200){
 				alert("OpenReading error: " + request.responseText);
-				this.setState({userInfo: undefined});
+				//this.setState({userInfo: undefined});
 				return;
 			}
 			if (this.props.location.pathname == "/mylibrary"){
@@ -190,7 +193,7 @@ export default class OpenReading extends React.Component{
 			var parsed = JSON.parse(request.responseText);
 			if (request.status != 200){
 				alert("OpenReading retrieveTotalBooks error: " + request.responseText);
-				this.setState({userInfo: undefined});
+				//this.setState({userInfo: undefined});
 				return;
 			}
 			console.log(request.responseText);
@@ -225,7 +228,7 @@ export default class OpenReading extends React.Component{
 			var parsed = JSON.parse(request.responseText);
 			if (request.status != 200){
 				alert("OpenReading texttypes error: " + request.responseText);
-				this.setState({userInfo: undefined});
+				//this.setState({userInfo: undefined});
 				return;
 			}
 
@@ -265,7 +268,7 @@ export default class OpenReading extends React.Component{
 			var parsed = JSON.parse(request.responseText);
 			if (request.status != 200){
 				alert("OpenReading topic error: " + request.responseText);
-				this.setState({userInfo: undefined});
+				//this.setState({userInfo: undefined});
 				return;
 			}
 			this.setState({
@@ -304,7 +307,7 @@ export default class OpenReading extends React.Component{
 			var parsed = JSON.parse(request.responseText);
 			if (request.status != 200){
 				alert("OpenReading topic error: " + request.responseText);
-				this.setState({userInfo: undefined});
+				//this.setState({userInfo: undefined});
 				return;
 			}
 
@@ -326,7 +329,7 @@ export default class OpenReading extends React.Component{
 			var parsed = JSON.parse(request.responseText);
 			if (request.status != 200){
 				alert("OpenReading retrieveFolders error: " + request.responseText);
-				this.setState({userInfo: undefined});
+				//this.setState({userInfo: undefined});
 				return;
 			}
 			this.setState({
@@ -353,6 +356,7 @@ export default class OpenReading extends React.Component{
 	
 	
 	filterChanged = (e) => {
+
 		let field = e.target.value.split(" ")[0];
 		let targetVal = e.target.value.substring(e.target.value.indexOf(" ") + 1);
 		let newFilter = new Object(this.state.filters);
@@ -380,11 +384,14 @@ export default class OpenReading extends React.Component{
 				alert("Filterchange error");
 				break;
 		};
-		if (e.target.checked){
+		if (targetArray.includes(targetVal) && !e.target.checked){
+			targetArray.splice(targetArray.indexOf(targetVal), 1);
+		} else if (!targetArray.includes(targetVal) && e.target.checked) {
 			targetArray.push(targetVal);
 		} else {
-			targetArray.splice(targetArray.indexOf(targetVal), 1);
+			return;
 		}
+		console.log(newFilter);
 		this.setState({filters: newFilter, currentPage: 0,}, function(){
 			this.retrieveBooks(20, 0);
 			this.retrieveTotalBooks();
@@ -417,54 +424,76 @@ export default class OpenReading extends React.Component{
 				alert("isChecked error");
 				break;
 		};
-		return (targetArray.indexOf(targetVal) >= 0);
+		return (targetArray.includes(targetVal));
+	};
+	
+	onFilterTabClicked(input){
+		let newSelected = this.state.selectedTabs.slice();
+		if (this.state.selectedTabs.includes(input)){
+			newSelected.splice(newSelected.indexOf(input, 1));
+		} else {
+			newSelected.push(input);
+		}
+		this.setState({selectedTabs: newSelected,});
 	};
 	
 	renderCheckboxes(){
 
 		var output = [];
-		output.push(<h2>Proficiency</h2>);
-		for (let i = 1; i <= 20; i++){
-			output.push(
-			<span><input type="checkbox" value={"proficiency level"+i} onChange={this.filterChanged} defaultChecked={this.isChecked("proficiency", "level"+i)}/>Level {i} &nbsp; &nbsp;</span>
-			);
+		output.push(<h2 className="filterTab" onClick={() => {this.onFilterTabClicked("Proficiency")}}>Proficiency</h2>);
+		if (this.state.selectedTabs.includes("Proficiency")){
+			for (let i = 1; i <= 20; i++){
+				output.push(
+				<span><input type="checkbox" value={"proficiency level"+i} onChange={this.filterChanged} defaultChecked={this.isChecked("proficiency", "level"+i)}/>Level {i} &nbsp; &nbsp;</span>
+				);
+			}
 		}
 		
 
 		for (const mainType of this.state.textType){
-			output.push(<h2>{mainType.filterName}</h2>);
-			for (const subType of mainType.subFilter){
+			output.push(<h2 className="filterTab" onClick={() => {this.onFilterTabClicked(mainType.filterName)}}>{mainType.filterName}</h2>);
+			if (this.state.selectedTabs.includes(mainType.filterName)){
+				for (const subType of mainType.subFilter){
+					output.push(
+						<span><input type="checkbox" value={"textType "+subType} onChange={this.filterChanged} defaultChecked={this.isChecked("textType", subType)}/>{subType} &nbsp; &nbsp;</span>
+					);
+				}
+			}
+		}
+		output.push(<h2 className="filterTab" onClick={() => {this.onFilterTabClicked("Topics")}}>Topics</h2>);
+		if (this.state.selectedTabs.includes("Topics")){
+			for (const topic of this.state.topics){
 				output.push(
-					<span><input type="checkbox" value={"textType "+subType} onChange={this.filterChanged} defaultChecked={this.isChecked("textType", subType)}/>{subType} &nbsp; &nbsp;</span>
+					<span><input type="checkbox" value={"topic "+topic} onChange={this.filterChanged} defaultChecked={this.isChecked("topic", topic)}/>{topic} &nbsp; &nbsp;</span>
 				);
 			}
 		}
-		output.push(<h2>Topics</h2>);
-		for (const topic of this.state.topics){
-			output.push(
-				<span><input type="checkbox" value={"topic "+topic} onChange={this.filterChanged} defaultChecked={this.isChecked("topic", topic)}/>{topic} &nbsp; &nbsp;</span>
-			);
+		
+		output.push(<h2 className="filterTab" onClick={() => {this.onFilterTabClicked("Series")}}>Series</h2>);
+		if (this.state.selectedTabs.includes("Series")){
+			for (const entry of this.state.series){
+				output.push(
+					<span><input type="checkbox" value={"series "+entry.id} onChange={this.filterChanged} defaultChecked={this.isChecked("series", entry.id)}/>{entry.mainCategory} &nbsp; &nbsp;</span>
+				);
+			}
 		}
 		
-		output.push(<h2>Series</h2>);
-		for (const entry of this.state.series){
-			output.push(
-				<span><input type="checkbox" value={"series "+entry.id} onChange={this.filterChanged} defaultChecked={this.isChecked("series", entry.id)}/>{entry.mainCategory} &nbsp; &nbsp;</span>
-			);
+		output.push(<h2 className="filterTab" onClick={() => {this.onFilterTabClicked("Interest Level")}}>Interest Level</h2>);
+		if (this.state.selectedTabs.includes("Interest Level")){
+			for (const entry of this.state.interest){
+				output.push(
+					<span><input type="checkbox" value={"interestLevel " + entry.displayName} onChange={this.filterChanged} defaultChecked={this.isChecked("interestLevel", entry.displayName)}/>{entry.displayName} &nbsp; &nbsp;</span>
+				);
+			}
 		}
 		
-		output.push(<h2>Interest Level</h2>);
-		for (const entry of this.state.interest){
-			output.push(
-				<span><input type="checkbox" value={"interestLevel " + entry.displayName} onChange={this.filterChanged} defaultChecked={this.isChecked("interestLevel", entry.displayName)}/>{entry.displayName} &nbsp; &nbsp;</span>
-			);
-		}
-		
-		output.push(<h2>Program Type</h2>);
-		for (const entry of this.state.programTypes){
-			output.push(
-				<span><input type="checkbox" value={"programType " + entry.displayName} onChange={this.filterChanged} defaultChecked={this.isChecked("programType", entry.displayName)}/>{entry.displayName} &nbsp; &nbsp;</span>
-			);
+		output.push(<h2 className="filterTab" onClick={() => {this.onFilterTabClicked("Program Type")}}>Program Type</h2>);
+		if (this.state.selectedTabs.includes("Program Type")){
+			for (const entry of this.state.programTypes){
+				output.push(
+					<span><input type="checkbox" value={"programType " + entry.displayName} onChange={this.filterChanged} defaultChecked={this.isChecked("programType", entry.displayName)}/>{entry.displayName} &nbsp; &nbsp;</span>
+				);
+			}
 		}
 		
 		
@@ -524,7 +553,7 @@ export default class OpenReading extends React.Component{
 			output.push(<span className="unchosenPage" onClick={() => this.onPageSelect(this.state.currentPage+1)}>{">"} &nbsp; </span>);
 			output.push(<span className="unchosenPage" onClick={() => this.onPageSelect(totalPages-1)}>{"»"} &nbsp; </span>);
 		}
-		output.push(<span>Total: {totalPages} &nbsp; </span>);
+		output.push(<span>&nbsp; Total: {totalPages} &nbsp; </span>);
 		output.push(<input placeholder="Enter page" onChange={this.onPageInputChange}/>);
 		output.push(<button onClick={() => this.onPageSelect(this.state.targetPage-1)}>Go!</button>);
 		return output;
@@ -619,9 +648,9 @@ export default class OpenReading extends React.Component{
 				Folder:
 				<select id="folderDropdown" onChange={this.onSelectFolder}>{this.renderFolderOptions()}</select>
 				</span>
-				<button className="createFolderButton" onClick={this.showCreateFolderWindow}>Create Folder</button>
-				<button className="removeFromFolderButton" onClick={this.deleteFromFolder}>Remove from folder</button>
-				<button className="editFolderButton" onClick={this.onShowEditFolder}>Edit folder</button>
+				<button id="createFolderButton" className="orangeButton" onClick={this.showCreateFolderWindow}>Create Folder</button>
+				<button id="removeFromFolderButton" className="orangeButton" onClick={this.deleteFromFolder}>Remove from folder</button>
+				<button id="editFolderButton" className="orangeButton" onClick={this.onShowEditFolder}>Edit folder</button>
 			</div>
 		);
 		return output;
@@ -824,12 +853,15 @@ export default class OpenReading extends React.Component{
 				<Modal 
 					className="standardModal" 
 					isOpen={this.state.showAssignmentInstructions} 
-					onRequestClose={this.hideAssignmentInstructons}
+					onRequestClose={this.hideAssignmentInstructions}
 					shouldCloseOnOverlayClick={true}
 					contentLabel={"ablong"}
 				>
+				<div className="topBar">
+				<span className="topBarText">{this.state.assignmentInfo.assignment.name}</span>
+				<img src={close_button} className="closeModalButton" onClick={this.hideAssignmentInstructions}/>
+				</div>
 				{this.state.assignmentInfo.assignment.instruction}<br/>
-				<button onClick={this.hideAssignmentInstructions}>Close</button>
 				</Modal>
 			</div>
 		);
@@ -887,8 +919,12 @@ export default class OpenReading extends React.Component{
 					onRequestClose={this.hideFilters} 
 					contentLabel={"ablong"}
 				>
+				<div className="topBar">
+				<span className="topBarText">Filters</span>
+				<img src={close_button} className="closeModalButton" onClick={this.hideFilters}/>
+				</div>
 				{this.renderCheckboxes()}
-				<button onClick={this.hideFilters}>closeThis</button>
+				
 				</Modal>
 				
 				<Modal

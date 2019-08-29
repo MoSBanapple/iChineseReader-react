@@ -232,7 +232,7 @@ export default class Report extends React.Component{
 						<td>{targetAssignment.name}</td>
 						<td>{startDate.toLocaleDateString("en-US")}</td>
 						<td>{endDate.toLocaleDateString("en-US")}</td>
-						<td>{thisElement.overallProgress}%</td>
+						<td><span className="progressSpan">{thisElement.overallProgress}%</span> &nbsp; <progress value={thisElement.overallProgress} max={100}/></td>
 					</tr>
 				);
 			}

@@ -70,6 +70,7 @@ form {border: 3px solid #f1f1f1;}
 .worldBoardView{
 	margin-top: 20px;
 	font-size: 30px;
+	margin-left: 2%;
 	width: 45%;
 	text-align: center;
 	display: inline-block;
@@ -78,7 +79,7 @@ form {border: 3px solid #f1f1f1;}
 .classBoardView{
 	margin-top: 20px;
 	font-size: 30px;
-	width: 45%;
+	width: 40%;
 	text-align: center;
 	display: inline-block;
 	margin-left: 10%;
@@ -99,4 +100,9 @@ form {border: 3px solid #f1f1f1;}
 
 .tableTitleText{
 	font-size: 30px;
+}
+
+.progressSpan{
+	width: 50px;
+	float: left;
 }

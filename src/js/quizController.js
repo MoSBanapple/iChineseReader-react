@@ -27,6 +27,8 @@ export default class QuizController extends React.Component {
 		
 		this.state = {
 			userInfo: info,
+			prevPage: cookie.load('prevPage', {doNotParse: true}),
+			toPrevPage: false,
 			profileInfo: null,
 			quizId: this.props.match.params.id,
 			quizInfo: null,
@@ -130,7 +132,7 @@ export default class QuizController extends React.Component {
 				}
 				let answerImage = null;
 				if (thisAnswer.answer_image != null && thisAnswer.answer_image != ""){
-					answerImage = (<div><img src={this.state.quizInfo.baseResourceUrl + thisAnswer.answer_image}/></div>);
+					answerImage = (<div><img className="quizImage" src={this.state.quizInfo.baseResourceUrl + thisAnswer.answer_image}/></div>);
 				}
 				return (<div>
 					<input 
@@ -146,7 +148,7 @@ export default class QuizController extends React.Component {
 			});
 			let questionImage = null;
 			if (thisQuestion.question_image != null && thisQuestion.question_image != ""){
-				questionImage = (<div><img src={this.state.quizInfo.baseResourceUrl + thisQuestion.question_image}/></div>);
+				questionImage = (<div><img className="quizImage" src={this.state.quizInfo.baseResourceUrl + thisQuestion.question_image}/></div>);
 			}
 			let audioButton = null;
 			if (thisQuestion.question_audio != null && thisQuestion.question_audio != ""){
@@ -183,6 +185,8 @@ export default class QuizController extends React.Component {
 		return this.state.quizInfo.questions.map((thisQuestion, index) => {
 			if (index == this.state.currentQuestion){
 				return (<span className="questionTabSelected">{index+1}</span>);
+			} else if (this.state.answers[index]) {
+				return (<span className="questionTabAnswered" onClick={() => {this.changeQuestion(index)}}>{index+1}</span>);
 			} else {
 				return (<span className="questionTab" onClick={() => {this.changeQuestion(index)}}>{index+1}</span>);
 			}
@@ -208,7 +212,7 @@ export default class QuizController extends React.Component {
 			answersToSubmit[i] = [this.state.answers[i-1]];
 		}
 		var postBody = JSON.stringify({
-			answers: answersToSubmit,//problem is somewhere here
+			answers: answersToSubmit,
 			simple: (this.state.profileInfo.settings.language == "Simplified"),
 		});
 		
@@ -282,10 +286,22 @@ export default class QuizController extends React.Component {
 		window.location.reload();
 	};
 	
+	onClickBackButton = () => {
+		if (!this.state.prevPage){
+			this.props.history.goBack();
+		}
+		this.setState({toPrevPage: true});
+	};
+	
 	render(){
 		if (this.state.userInfo == undefined){
 			return <Redirect push to = {{
 			pathname:"/",
+			}}/>
+		}
+		if (this.state.toPrevPage){
+			return <Redirect push to = {{
+			pathname:this.state.prevPage,
 			}}/>
 		}
 		let submitButton = null;
@@ -297,6 +313,7 @@ export default class QuizController extends React.Component {
 			windowBody = (<div className="quizWindow">
 					{this.state.questionBody[this.state.currentQuestion]}
 					{this.renderQuestionBody()}<br/>
+					<br/>
 					{submitButton}
 				</div>);
 		} else {
@@ -308,7 +325,7 @@ export default class QuizController extends React.Component {
 		return(
 			<body className="quizBody">
 				<div className="topBar">
-					<img className="backButton" src={back_btn} onClick={this.props.history.goBack}/>
+					<img className="backButton" src={back_btn} onClick={this.onClickBackButton}/>
 					<div className="topBarText">{this.state.headerName}</div>
 				</div>
 				{windowBody}

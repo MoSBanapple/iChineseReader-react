@@ -1,0 +1,854 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7" />
+    <meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimal-ui">
+    <title>Book</title>
+    <!--[if lt IE 9]><script src="https://html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+    <link rel="stylesheet" href="./css/foundation.min.css" />
+<link rel="stylesheet" type="text/css" href="./css/slick.css"/>
+<link rel="stylesheet" type="text/css" href="./css/jquery.qtip.min.css"/>
+
+<style>
+html {
+	width: 768px;
+	height: 1024px;
+	max-width: 768px;
+	max-height: 1024px;
+}
+body {
+	background: #ccc;
+	font: normal 12px/1.2 arial, verdana, sans-serif;
+}
+#book-view {
+	width: 768px;
+	height: 1024px;
+	overflow: hidden;
+	margin: auto;
+	position: relative;
+}
+.outer-wrap {
+	height: 1024px;
+	width: 768px;
+	margin: auto;
+}
+.inner-wrap {
+	height: 100%;
+}
+.text-block {
+	position: absolute;
+	bottom: 2.5rem;
+	margin: 0 10%;
+	font-weight: normal;
+	visibility: hidden;
+	background-color: rgba(255, 255, 255, 0.9);
+	box-shadow: 0 0 40px #fff, 0 0 40px #fff, 0 0 40px #fff, 0 0 40px #fff;
+	border-radius: 50px;
+	padding: 10px;
+	opacity: 0;
+	transition: visibility 0s linear 0.5s, all .5s;
+	-moz-transition: visibility 0s linear 0.5s, all .5s;
+	-webkit-transition: visibility 0s linear 0.5s, all .5s;
+}
+.text-block-fi {
+	transform: translateY(-5px);
+	-moz-transform: translateY(-5px);
+	-webkit-transform: translateY(-5px);
+	visibility: visible;
+	opacity: 1;
+}
+.text-block-fo {
+	transform: translateY(5px);
+	-moz-transform: translateY(5px);
+	-webkit-transform: translateY(5px);
+	visibility: hidden;
+	opacity: 0;
+}
+.text {
+	font-size: 20px;
+	display: none;
+	margin: 15px;
+}
+.simp-p {
+	display: block;
+}
+.trad-p {
+	display: none;
+}
+.text p {
+	font-size: 2rem;
+}
+#page-nav {
+	width:100%;
+	height:100%;
+	position:absolute;
+	top:0;
+}
+#page-nav>div {
+	width: 100%;
+	height: 5rem;
+	position: relative;
+	top: 50%;
+	transform: translateY(-50%);
+}
+#prev-page {
+	width: 3rem;
+	height: 5rem;
+	background-image: url('./css/images/arrow-prev.png');
+	background-repeat: no-repeat;
+	background-size: 3rem 5rem;
+	position:absolute;
+	left: 0;
+	top: 50%;
+	transform: translateY(-50%);
+}
+#next-page {
+	width: 3rem;
+	height: 5rem;
+	background-image: url('./css/images/arrow-next.png');
+	background-repeat: no-repeat;
+	background-size: 3rem 5rem;
+	position:absolute;
+	right: 0;
+	top: 50%;
+	transform: translateY(-50%);
+}
+.book-content {
+	position: relative;
+	width: 768px;
+	height: 984px;
+}
+.words.selected, .words>span.selected, .words>span>em.selected {
+	color: #ff3300;cursor: pointer;
+}
+.slick-arrow, .slick-arrow:active, .slick-arrow:focus, .slick-arrow:link, .slick-arrow:visited {
+	width: 75px;
+	height: 75px;
+	position: absolute;
+	top: 800px;
+	background-color: none !important;
+	background-color: none !important;
+	border: none !important;
+	z-index: +1;
+	cursor: pointer;
+	font-size: 6rem;
+	color: white;
+	opacity: 0.4;
+	text-shadow: 1px 1px 3px #000;
+}
+@media only screen and (min-width: 800px) {
+.slick-arrow:hover {
+	opacity: 1;
+	text-shadow: 5px 0px 10px #666;
+}
+}
+.slick-prev:after {
+	content: "❰";
+}
+.slick-prev {
+	left: 30px;
+	text-align: right;
+}
+.slick-next:after {
+	content: "❱";
+}
+.slick-next {
+	right: 30px;
+	text-align: left;
+}
+
+.cover-text {
+	position: absolute;
+	bottom: 250px;
+	width: 100%;
+}
+.cover-text .text {
+	position: absolute;
+	width: 100%;
+	font-size: 4.5rem !important;
+	color: #fff;
+	text-align: center;
+}
+.cover-text .trad {
+	display: none;
+}
+/* Book Style */
+@-webkit-keyframes anim-apple {
+	0% {-webkit-transform: rotate(30deg)}
+	25% {-webkit-transform: rotate(0deg)}
+	50% {-webkit-transform: rotate(-30deg)}
+	75% {-webkit-transform: rotate(0deg)}
+	100% {-webkit-transform: rotate(30deg)}
+}
+@keyframes anim-apple {
+	0% {transform: rotate(30deg)}
+	25% {transform: rotate(0deg)}
+	50% {transform: rotate(-30deg)}
+	75% {transform: rotate(0deg)}
+	100% {transform: rotate(30deg)}
+}
+.apple, .strawberry, .cherry, .orange, .coconut {
+	-webkit-animation: anim-apple 1s infinite;
+	animation: anim-apple 1s infinite;
+}
+.hidden {
+	display: none;
+}
+.slick-disabled {
+	display: none !important;
+}
+.a-disabled {
+	pointer-events: none;
+}
+.tt-text {
+	background-color: green;
+}
+.tt-hook {
+	width: 30px;
+	height: 30px;
+	background: transparent url('./css/images/vocab.png') no-repeat;
+	display: inline-block;
+	vertical-align: text-bottom;
+	margin: 0 5px;
+}
+.tt-style {
+	padding: 25px;
+	background-color: #FC6;
+	border: 2px solid #FC6;
+}
+.tt-content {
+	padding: 5px 15px;
+	font-size: 2rem;
+}
+.tt-content rt {
+	font-size: 1rem;
+}
+.tooltip {
+	background-color: #46d;
+}
+.tooltip.radius {
+	border-radius: 25px;
+}
+.qt-hook {
+	width: 30px;
+	height: 30px;
+	background: transparent url('./css/images/vocab.png') no-repeat;
+	display: inline-block;
+	vertical-align: text-bottom;
+	margin: 0 5px;
+}
+.qt-content {
+	padding: 5px 15px;
+	font-size: 2rem;
+}
+.qt-content rt {
+	font-size: 1rem;
+}
+</style>
+<script>
+function launchFullScreen(element) {
+	if(element.requestFullscreen) {
+		element.requestFullscreen();
+	} else if(element.mozRequestFullScreen) {
+		element.mozRequestFullScreen();
+	} else if(element.webkitRequestFullscreen) {
+		element.webkitRequestFullscreen();
+	} else if(element.msRequestFullscreen) {
+		element.msRequestFullscreen();
+	}
+}
+function exitFullScreen() {
+  if(document.exitFullscreen) {
+    document.exitFullscreen();
+  } else if(document.mozCancelFullScreen) {
+    document.mozCancelFullScreen();
+  } else if(document.webkitExitFullscreen) {
+    document.webkitExitFullscreen();
+  } else if(document.msExitFullscreen) {
+    document.msExitFullscreen();
+  }
+}
+/* Word Timeline */
+var words0 = {};
+var words1 = {"w1-1": { start: 0, end: 1.820000 },
+"w1-2": { start: 1.820000, end: 3.990000 },
+"w1-3": { start: 3.990000, end: 7.310000 }
+};
+var words2 = {"w2-1": { start: 0, end: 2.540000 },
+"w2-2": { start: 2.540000, end: 4.440000 }
+};
+var words3 = {"w3-1": { start: 0, end: 1.220000 },
+"w3-2": { start: 1.220000, end: 3.290000 }
+};
+var words4 = {"w4-1": { start: 0, end: 2.730000 },
+"w4-2": { start: 2.730000, end: 5.700000 }
+};
+var words5 = {"w5-1": { start: 0, end: 1.760000 },
+"w5-2": { start: 1.760000, end: 3.490000 },
+"w5-3": { start: 3.490000, end: 6.620000 },
+};
+var words6 = {"w6-1": { start: 0, end: 1.300000 },
+"w6-2": { start: 1.300000, end: 3.420000 },
+};
+var words7 = {"w7-1": { start: 0, end: 2.690000 },
+"w7-2": { start: 2.690000, end: 6.220000 },
+};
+var words8 = {"w8-1": { start: 0, end: 1.720000 },
+"w8-2": { start: 1.720000, end: 2.960000 },
+"w8-3": { start: 2.960000, end: 6.020000 },
+};
+var words9 = {"w9-1": { start: 0, end: 1.640000 },
+"w9-2": { start: 1.640000, end: 3.410000 },
+};
+var words10 = {"w10-1": { start: 0, end: 2.530000 },
+"w10-2": { start: 2.530000, end: 5.240000 },
+};
+/* End Word Timeline */
+</script>
+</head>
+<body>
+	<audio id="bgm" class="bgm" preload="auto" loop>
+		<source src="./pages/assets/bg.mp3" type="audio/mpeg">
+		<source src="./pages/assets/bg.ogg" type="audio/ogg">
+	</audio>
+<audio id="read" class="read" src="" preload="auto"></audio>
+<div id="book-view">
+      <div id='play-overlay' class='overlay'>
+          <div id='play-start'></div>
+      </div>
+<div class="outer-wrap">
+  <div class="inner-wrap">
+<!--// Content //-->
+	<section id="main-section">
+
+<div class="book-slide">
+<div id="p0">
+				<div class="book-content" style="background-image:url('./pages/assets/bg1.jpg')">
+<div style="position:absolute;top:55px;left:0"><img src="./pages/assets/sun.gif" /></div>
+<div style="position:absolute;top:30px;left:0"><img class="reload" src="./pages/p0/0c.gif" /></div>
+<div style="position:absolute;top:350px;left:240px"><img src="./pages/p0/3c.gif" /></div>
+<div style="position:absolute;top:230px;left:20px"><img src="./pages/assets/apple.png" class="apple" /></div>
+<div style="position:absolute;top:280px;left:100px"><img src="./pages/assets/apple.png" class="apple" /></div>
+<div style="position:absolute;top:250px;left:500px"><img src="./pages/assets/apple.png" class="apple" /></div>
+<div style="position:absolute;top:250px;left:200px"><img src="./pages/assets/apple.png" class="apple" /></div>
+<div style="position:absolute;top:280px;left:580px"><img src="./pages/assets/apple.png" class="apple" /></div>
+<div style="position:absolute;top:230px;left:650px"><img src="./pages/assets/apple.png" class="apple" /></div>
+<div class="cover-text">
+<div class="text simp-p chfont"><div style="display:inline-block;transform:rotateZ(-20deg)">第</div>一<div style="display:inline-block;transform:rotateZ(20deg)">课</div><div>小刺猬找食物</div></div>
+<div class="text trad-p trfont"><div style="display:inline-block;transform:rotateZ(-20deg)">第</div>一<div style="display:inline-block;transform:rotateZ(20deg)">課</div><div>小刺蝟找食物</div></div>
+</div>
+				</div>
+</div>
+<div id="p1">
+				<div class="book-content" style="background-image:url('./pages/assets/bg1.jpg')">
+<div style="position:absolute;top:55px;left:0"><img src="./pages/assets/sun.gif" /></div>
+<div style="position:absolute;top:320px;left:0px"><img class="reload" src="./pages/p1/1c.gif" /></div>
+<div style="position:absolute;top:230px;left:20px"><img src="./pages/assets/apple.png" class="apple" /></div>
+<div style="position:absolute;top:280px;left:100px"><img src="./pages/assets/apple.png" class="apple" /></div>
+<div style="position:absolute;top:250px;left:500px"><img src="./pages/assets/apple.png" class="apple" /></div>
+<div style="position:absolute;top:250px;left:200px"><img src="./pages/assets/apple.png" class="apple" /></div>
+<div style="position:absolute;top:280px;left:580px"><img src="./pages/assets/apple.png" class="apple" /></div>
+<div style="position:absolute;top:230px;left:650px"><img src="./pages/assets/apple.png" class="apple" /></div>
+<div class="text-block text-block-fo" style="width:80%;height:25%">
+	<div class="text simp-p chfont"><p><span class='word-1 words w1-1' data-start='0'><ruby>有<rt>yǒu</rt></ruby><ruby>一<rt>yì</rt></ruby><ruby>天<rt>tiān</rt></ruby></span>，<span class='word-1 words w1-2' data-start='1.820000'><ruby>一<rt>yī</rt></ruby><ruby>只<rt>zhī</rt></ruby><ruby>小<rt>xiǎo</rt></ruby><span class="dict-text tt-text"><ruby>刺<rt>cì</rt></ruby><ruby>猬<rt>wei</rt></ruby></span><span data-tooltip aria-haspopup='true' class="dict-icon has-tip tip-top radius" title='<div class="tt-content"><ruby>刺<rt>cì</rt></ruby><ruby>猬<rt>wei</rt></ruby><br><strong>Hedgehog</strong></div>'><span class='tt-hook'></span></span><ruby>饿<rt>è</rt></ruby><ruby>了<rt>le</rt></ruby></span>，<span class='word-1 words w1-3' data-start='3.990000'><ruby>他<rt>tā</rt></ruby><ruby>出<rt>chū</rt></ruby><ruby>来<rt>lái</rt></ruby><ruby>找<rt>zhǎo</rt></ruby><span class="dict-text tt-text"><ruby>东<rt>dōnɡ</rt></ruby><ruby>西<rt>xi</rt></ruby></span><span data-tooltip aria-haspopup='true' class="dict-icon has-tip tip-top radius" title='<div class="tt-content"><ruby>东<rt>dōnɡ</rt></ruby><ruby>西<rt>xi</rt></ruby><br><strong>Thing</strong></div>'><span class='tt-hook'></span></span><ruby>吃<rt>chī</rt></ruby></span>。</p></div>
+	<div class="text trad-p trfont"><p><span class='word-1 words w1-1' data-start='0'><ruby>有<rt>yǒu</rt></ruby><ruby>一<rt>yì</rt></ruby><ruby>天<rt>tiān</rt></ruby></span>，<span class='word-1 words w1-2' data-start='1.820000'><ruby>一<rt>yī</rt></ruby><ruby>隻<rt>zhī</rt></ruby><ruby>小<rt>xiǎo</rt></ruby><ruby>刺<rt>cì</rt></ruby><ruby>猬<rt>wei</rt></ruby><span class='qt-hook' data-dict="1"></span><ruby>餓<rt>è</rt></ruby><ruby>了<rt>le</rt></ruby></span>，<span class='word-1 words w1-3' data-start='3.990000'><ruby>他<rt>tā</rt></ruby><ruby>出<rt>chū</rt></ruby><ruby>來<rt>lái</rt></ruby><ruby>找<rt>zhǎo</rt></ruby><ruby>東<rt>dōnɡ</rt></ruby><ruby>西<rt>xi</rt></ruby><span class='qt-hook' data-dict="2"></span><ruby>吃<rt>chī</rt></ruby></span>。</p></div>
+</div>
+				</div>
+</div>
+<div id="p2">
+				<div class="book-content" style="background-image:url('./pages/assets/bg1.jpg')">
+<div style="position:absolute;top:55px;left:0"><img src="./pages/assets/sun.gif" /></div>
+<div style="position:absolute;top:420px;left:300px"><img class="reload" src="./pages/p2/2c.gif" /></div>
+<div style="position:absolute;top:230px;left:20px"><img src="./pages/assets/apple.png" class="apple" /></div>
+<div style="position:absolute;top:280px;left:100px"><img src="./pages/assets/apple.png" class="apple" /></div>
+<div style="position:absolute;top:250px;left:500px"><img src="./pages/assets/apple.png" class="apple" /></div>
+<div style="position:absolute;top:250px;left:200px"><img src="./pages/assets/apple.png" class="apple" /></div>
+<div style="position:absolute;top:280px;left:580px"><img src="./pages/assets/apple.png" class="apple" /></div>
+<div style="position:absolute;top:230px;left:650px"><img src="./pages/assets/apple.png" class="apple" /></div>
+<div class="text-block text-block-fo" style="width:80%;height:25%">
+<div class="text simp-p chfont"><p><span class='word-2 words w2-1' data-start='0'><ruby>它<rt>tā</rt></ruby><ruby>找<rt>zhǎo</rt></ruby><ruby>到<rt>dào</rt></ruby><ruby>了<rt>le</rt></ruby><ruby>很<rt>hěn</rt></ruby><ruby>多<rt>duō</rt></ruby><ruby>苹<rt>pínɡ</rt></ruby><ruby>果<rt>ɡuǒ</rt></ruby></span>，<span class='word-2 words w2-2' data-start='2.540000'><ruby>高<rt>ɡāo</rt></ruby><ruby>兴<rt>xìnɡ</rt></ruby><ruby>极<rt>jí</rt></ruby><ruby>了<rt>le</rt></ruby></span>。</p></div>
+<div class="text trad-p trfont"><p><span class='word-2 words w2-1' data-start='0'><ruby>它<rt>tā</rt></ruby><ruby>找<rt>zhǎo</rt></ruby><ruby>到<rt>dào</rt></ruby><ruby>了<rt>le</rt></ruby><ruby>很<rt>hěn</rt></ruby><ruby>多<rt>duō</rt></ruby><ruby>蘋<rt>pínɡ</rt></ruby><ruby>果<rt>ɡuǒ</rt></ruby></span>，<span class='word-2 words w2-2' data-start='2.540000'><ruby>高<rt>ɡāo</rt></ruby><ruby>興<rt>xìnɡ</rt></ruby><ruby>極<rt>jí</rt></ruby><ruby>了<rt>le</rt></ruby></span>。</p></div>
+</div>
+				</div>
+</div>
+<div id="p3"><!--// Beginning of Page //-->
+				<div class="book-content" style="background-image:url('./pages/assets/bg1.jpg')">
+<div style="position:absolute;top:55px;left:0"><img src="./pages/assets/sun.gif" /></div>
+<div style="position:absolute;top:350px;left:240px"><img class="reload" src="./pages/p3/3c.gif" /></div>
+<div style="position:absolute;top:230px;left:20px"><img src="./pages/assets/apple.png" class="apple" /></div>
+<div style="position:absolute;top:280px;left:100px"><img src="./pages/assets/apple.png" class="apple" /></div>
+<div style="position:absolute;top:250px;left:500px"><img src="./pages/assets/apple.png" class="apple" /></div>
+<div style="position:absolute;top:250px;left:200px"><img src="./pages/assets/apple.png" class="apple" /></div>
+<div style="position:absolute;top:280px;left:580px"><img src="./pages/assets/apple.png" class="apple" /></div>
+<div style="position:absolute;top:230px;left:650px"><img src="./pages/assets/apple.png" class="apple" /></div>
+<div class="text-block text-block-fo" style="width:80%;height:25%">
+<div class="text simp-p chfont"><p><span class='word-3 words w3-1' data-start='0'><ruby>于<rt>yú</rt></ruby><ruby>是<rt>shì</rt></ruby></span>，<span class='word-3 words w3-2' data-start='1.220000'><ruby>它<rt>tā</rt></ruby><ruby>滚<rt>ɡǔn</rt></ruby><ruby>了<rt>le</rt></ruby><ruby>几<rt>jǐ</rt></ruby><ruby>下<rt>xià</rt></ruby></span>。</p></div>
+<div class="text trad-p trfont"><p><span class='word-3 words w3-1' data-start='0'><ruby>於<rt>yú</rt></ruby><ruby>是<rt>shì</rt></ruby></span>，<span class='word-3 words w3-2' data-start='1.220000'><ruby>它<rt>tā</rt></ruby><ruby>滾<rt>ɡǔn</rt></ruby><ruby>了<rt>le</rt></ruby><ruby>幾<rt>jǐ</rt></ruby><ruby>下<rt>xià</rt></ruby></span>。</p></div>
+</div>
+				</div>
+</div><!--// End of Page //-->
+<div id="p4">
+				<div class="book-content" style="background-image:url('./pages/assets/bg1.jpg')">
+<div style="position:absolute;top:55px;left:0"><img src="./pages/assets/sun.gif" /></div>
+<div style="position:absolute;top:380px;left:240px"><img class="reload" src="./pages/p4/4c.gif" /></div>
+<div style="position:absolute;top:230px;left:20px"><img src="./pages/assets/apple.png" class="apple" /></div>
+<div style="position:absolute;top:250px;left:200px"><img src="./pages/assets/apple.png" class="apple" /></div>
+<div style="position:absolute;top:250px;left:500px"><img src="./pages/assets/apple.png" class="apple" /></div>
+<div style="position:absolute;top:230px;left:650px"><img src="./pages/assets/apple.png" class="apple" /></div>
+<div style="position:absolute;top:550px;left:290px"><img src="./pages/assets/apple.png" class="" /></div>
+<div style="position:absolute;top:520px;left:330px"><img src="./pages/assets/apple.png" class="" /></div>
+<div class="text-block text-block-fo" style="width:80%;height:25%">
+<div class="text simp-p chfont"><p><span class='word-4 words w4-1' data-start='0'><ruby>扎<rt>zā</rt></ruby><ruby>了<rt>le</rt></ruby><ruby>两<rt>liǎnɡ</rt></ruby><ruby>个<rt>ɡè</rt></ruby><ruby>苹<rt>pínɡ</rt></ruby><ruby>果<rt>ɡuǒ</rt></ruby></span>。<span class='word-4 words w4-2' data-start='2.730000'><ruby>它<rt>tā</rt></ruby><ruby>高<rt>ɡāo</rt></ruby><ruby>高<rt>ɡɑo</rt></ruby><ruby>兴<rt>xìnɡ</rt></ruby><ruby>兴<rt>xìnɡ</rt></ruby><ruby>地<rt>de</rt></ruby><ruby>回<rt>huí</rt></ruby><ruby>家<rt>jiā</rt></ruby><ruby>了<rt>le</rt></ruby></span>。</p></div>
+<div class="text trad-p trfont"><p><span class='word-4 words w4-1' data-start='0'><ruby>扎<rt>zā</rt></ruby><ruby>了<rt>le</rt></ruby><ruby>兩<rt>liǎnɡ</rt></ruby><ruby>個<rt>ɡè</rt></ruby><ruby>蘋<rt>pínɡ</rt></ruby><ruby>果<rt>ɡuǒ</rt></ruby></span>。<span class='word-4 words w4-2' data-start='2.730000'><ruby>它<rt>tā</rt></ruby><ruby>高<rt>ɡāo</rt></ruby><ruby>高<rt>ɡɑo</rt></ruby><ruby>興<rt>xìnɡ</rt></ruby><ruby>興<rt>xìnɡ</rt></ruby><ruby>地<rt>de</rt></ruby><ruby>回<rt>huí</rt></ruby><ruby>家<rt>jiā</rt></ruby><ruby>了<rt>le</rt></ruby></span>。</p></div>
+</div>
+				</div>
+</div>
+<div id="p5">
+				<div class="book-content" style="background-image:url('./pages/assets/bg2.jpg')">
+<div style="position:absolute;top:55px;left:0"><img src="./pages/assets/sun.gif" /></div>
+<div style="position:absolute;top:420px;left:280px"><img class="reload" src="./pages/p5/5c.gif" /></div>
+<div style="transform:scale(.5);-webkit-transform:scale(.5);position:absolute;top:250px;left:100px"><img src="./pages/assets/strawberry.png" class="strawberry" /></div>
+<div style="transform:scale(.4);-webkit-transform:scale(.4);position:absolute;top:250px;left:550px"><img src="./pages/assets/strawberry.png" class="strawberry" /></div>
+<div style="transform:scale(.6);-webkit-transform:scale(.6);position:absolute;top:260px;left:200px"><img src="./pages/assets/strawberry.png" class="strawberry" /></div>
+<div style="transform:scale(.3);-webkit-transform:scale(.3);position:absolute;top:260px;left:480px"><img src="./pages/assets/strawberry.png" class="strawberry" /></div>
+<div style="transform:scale(.5);-webkit-transform:scale(.5);position:absolute;top:340px;left:450px"><img src="./pages/assets/strawberry.png" class="strawberry" /></div>
+<div style="transform:scale(1);-webkit-transform:scale(1);position:absolute;top:350px;left:50px"><img src="./pages/assets/strawberry.png" class="strawberry" /></div>
+<div style="transform:scale(.8);-webkit-transform:scale(.8);position:absolute;top:380px;left:200px"><img src="./pages/assets/strawberry.png" class="strawberry" /></div>
+<div style="transform:scale(.6);-webkit-transform:scale(.6);position:absolute;top:320px;left:520px"><img src="./pages/assets/strawberry.png" class="strawberry" /></div>
+<div style="transform:scale(.7);-webkit-transform:scale(.7);position:absolute;top:450px;left:670px"><img src="./pages/assets/strawberry.png" class="strawberry" /></div>
+<div style="transform:scale(1);-webkit-transform:scale(1);position:absolute;top:420px;left:580px"><img src="./pages/assets/strawberry.png" class="strawberry" /></div>
+<div style="transform:scale(.8);-webkit-transform:scale(.8);position:absolute;top:390px;left:120px"><img src="./pages/assets/strawberry.png" class="strawberry" /></div>
+<div class="text-block text-block-fo" style="width:80%;height:25%">
+	<div class="text simp-p chfont" style="white-space:nowrap;"><p><span class='word-5 words w5-1' data-start='0'><ruby>第<rt>dì</rt></ruby><ruby>二<rt>èr</rt></ruby><ruby>天<rt>tiān</rt></ruby></span>，<span class='word-5 words w5-2' data-start='1.760000'><ruby>它<rt>tā</rt></ruby><ruby>又<rt>yòu</rt></ruby><ruby>饿<rt>è</rt></ruby><ruby>了<rt>le</rt></ruby></span>。<span class='word-5 words w5-3' data-start='3.490000'><ruby>它<rt>tā</rt></ruby><ruby>找<rt>zhǎo</rt></ruby><ruby>到<rt>dào</rt></ruby><ruby>了<rt>le</rt></ruby><ruby>很<rt>hěn</rt></ruby><ruby>多<rt>duō</rt></ruby><wbr><ruby>草<rt>cǎo</rt></ruby><ruby>莓<rt>méi</rt></ruby></span>。</p></div>
+<div class="text trad-p trfont"><p><span class='word-5 words w5-1' data-start='0'><ruby>第<rt>dì</rt></ruby><ruby>二<rt>èr</rt></ruby><ruby>天<rt>tiān</rt></ruby></span>，<span class='word-5 words w5-2' data-start='1.760000'><ruby>它<rt>tā</rt></ruby><ruby>又<rt>yòu</rt></ruby><ruby>餓<rt>è</rt></ruby><ruby>了<rt>le</rt></ruby></span>。<span class='word-5 words w5-3' data-start='3.490000'><ruby>它<rt>tā</rt></ruby><ruby>找<rt>zhǎo</rt></ruby><ruby>到<rt>dào</rt></ruby><ruby>了<rt>le</rt></ruby><ruby>很<rt>hěn</rt></ruby><ruby>多<rt>duō</rt></ruby><ruby>草<rt>cǎo</rt></ruby><ruby>莓<rt>méi</rt></ruby></span>。</p></div>
+</div>
+				</div>
+</div>
+<div id="p6">
+				<div class="book-content" style="background-image:url('./pages/assets/bg2.jpg')">
+<div style="position:absolute;top:55px;left:0"><img src="./pages/assets/sun.gif" /></div>
+<div style="position:absolute;top:350px;left:230px"><img class="reload" src="./pages/p6/6c.gif" /></div>
+<div style="transform:scale(.5);-webkit-transform:scale(.5);position:absolute;top:250px;left:100px"><img src="./pages/assets/strawberry.png" class="strawberry" /></div>
+<div style="transform:scale(.4);-webkit-transform:scale(.4);position:absolute;top:250px;left:550px"><img src="./pages/assets/strawberry.png" class="strawberry" /></div>
+<div style="transform:scale(.6);-webkit-transform:scale(.6);position:absolute;top:260px;left:200px"><img src="./pages/assets/strawberry.png" class="strawberry" /></div>
+<div style="transform:scale(.3);-webkit-transform:scale(.3);position:absolute;top:260px;left:480px"><img src="./pages/assets/strawberry.png" class="strawberry" /></div>
+<div style="transform:scale(.5);-webkit-transform:scale(.5);position:absolute;top:340px;left:450px"><img src="./pages/assets/strawberry.png" class="strawberry" /></div>
+<div style="transform:scale(1);-webkit-transform:scale(1);position:absolute;top:350px;left:50px"><img src="./pages/assets/strawberry.png" class="strawberry" /></div>
+<div style="transform:scale(.8);-webkit-transform:scale(.8);position:absolute;top:380px;left:200px"><img src="./pages/assets/strawberry.png" class="strawberry" /></div>
+<div style="transform:scale(.6);-webkit-transform:scale(.6);position:absolute;top:320px;left:520px"><img src="./pages/assets/strawberry.png" class="strawberry" /></div>
+<div style="transform:scale(.7);-webkit-transform:scale(.7);position:absolute;top:450px;left:670px"><img src="./pages/assets/strawberry.png" class="strawberry" /></div>
+<div style="transform:scale(1);-webkit-transform:scale(1);position:absolute;top:420px;left:580px"><img src="./pages/assets/strawberry.png" class="strawberry" /></div>
+<div style="transform:scale(.8);-webkit-transform:scale(.8);position:absolute;top:390px;left:120px"><img src="./pages/assets/strawberry.png" class="strawberry" /></div>
+<div class="text-block text-block-fo" style="width:80%;height:25%">
+<div class="text simp-p chfont"><p><span class='word-6 words w6-1' data-start='0'><ruby>于<rt>yú</rt></ruby><ruby>是<rt>shì</rt></ruby></span>，<span class='word-6 words w6-2' data-start='1.300000'><ruby>它<rt>tā</rt></ruby><ruby>又<rt>yòu</rt></ruby><ruby>滚<rt>ɡǔn</rt></ruby><ruby>了<rt>le</rt></ruby><ruby>几<rt>jǐ</rt></ruby><ruby>下<rt>xià</rt></ruby></span>。</p></div>
+<div class="text trad-p trfont"><p><span class='word-6 words w6-1' data-start='0'><ruby>於<rt>yú</rt></ruby><ruby>是<rt>shì</rt></ruby></span>，<span class='word-6 words w6-2' data-start='1.300000'><ruby>它<rt>tā</rt></ruby><ruby>又<rt>yòu</rt></ruby><ruby>滾<rt>ɡǔn</rt></ruby><ruby>了<rt>le</rt></ruby><ruby>幾<rt>jǐ</rt></ruby><ruby>下<rt>xià</rt></ruby></span>。</p></div>
+</div>
+				</div>
+</div>
+<div id="p7">
+				<div class="book-content" style="background-image:url('./pages/assets/bg2.jpg')">
+<div style="position:absolute;top:55px;left:0"><img src="./pages/assets/sun.gif" /></div>
+<div style="position:absolute;top:350px;left:230px"><img class="reload" src="./pages/p7/7c.gif" /></div>
+<div style="transform:scale(.5);-webkit-transform:scale(.5);position:absolute;top:250px;left:100px"><img src="./pages/assets/strawberry.png" class="strawberry" /></div>
+<div style="transform:scale(.4);-webkit-transform:scale(.4);position:absolute;top:250px;left:550px"><img src="./pages/assets/strawberry.png" class="strawberry" /></div>
+<div style="transform:scale(.8);-webkit-transform:scale(.8);position:absolute;top:520px;left:290px"><img src="./pages/assets/strawberry.png" class="" /></div>
+<div style="transform:scale(.3);-webkit-transform:scale(.3);position:absolute;top:260px;left:480px"><img src="./pages/assets/strawberry.png" class="strawberry" /></div>
+<div style="transform:scale(.5);-webkit-transform:scale(.5);position:absolute;top:340px;left:450px"><img src="./pages/assets/strawberry.png" class="strawberry" /></div>
+<div style="transform:scale(1);-webkit-transform:scale(1);position:absolute;top:350px;left:50px"><img src="./pages/assets/strawberry.png" class="strawberry" /></div>
+<div style="transform:scale(.8);-webkit-transform:scale(.8);position:absolute;top:380px;left:200px"><img src="./pages/assets/strawberry.png" class="strawberry" /></div>
+<div style="transform:scale(.6);-webkit-transform:scale(.6);position:absolute;top:500px;left:360px"><img src="./pages/assets/strawberry.png" class="" /></div>
+<div style="transform:scale(.7);-webkit-transform:scale(.7);position:absolute;top:480px;left:320px"><img src="./pages/assets/strawberry.png" class="" /></div>
+<div style="transform:scale(1);-webkit-transform:scale(1);position:absolute;top:420px;left:580px"><img src="./pages/assets/strawberry.png" class="strawberry" /></div>
+<div style="transform:scale(1);-webkit-transform:scale(1);position:absolute;top:510px;left:330px"><img src="./pages/assets/strawberry.png" class="" /></div>
+<div class="text-block text-block-fo" style="width:80%;height:25%">
+<div class="text simp-p chfont"><p><span class='word-7 words w7-1' data-start='0'><ruby>扎<rt>zhā</rt></ruby><ruby>了<rt>le</rt></ruby><ruby>四<rt>sì</rt></ruby><ruby>个<rt>ɡè</rt></ruby><ruby>草<rt>cǎo</rt></ruby><ruby>莓<rt>méi</rt></ruby></span>。<span class='word-7 words w7-2' data-start='2.690000'><ruby>它<rt>tā</rt></ruby><ruby>又<rt>yòu</rt></ruby><ruby>高<rt>ɡāo</rt></ruby><ruby>高<rt>ɡɑo</rt></ruby><ruby>兴<rt>xìnɡ</rt></ruby><ruby>兴<rt>xìnɡ</rt></ruby><ruby>地<rt>de</rt></ruby><ruby>回<rt>huí</rt></ruby><ruby>家<rt>jiā</rt></ruby><ruby>了<rt>le</rt></ruby></span>。</p></div>
+<div class="text trad-p trfont"><p><span class='word-7 words w7-1' data-start='0'><ruby>扎<rt>zhā</rt></ruby><ruby>了<rt>le</rt></ruby><ruby>四<rt>sì</rt></ruby><ruby>個<rt>ɡè</rt></ruby><ruby>草<rt>cǎo</rt></ruby><ruby>莓<rt>méi</rt></ruby></span>。<span class='word-7 words w7-2' data-start='2.690000'><ruby>它<rt>tā</rt></ruby><ruby>又<rt>yòu</rt></ruby><ruby>高<rt>ɡāo</rt></ruby><ruby>高<rt>ɡɑo</rt></ruby><ruby>興<rt>xìnɡ</rt></ruby><ruby>興<rt>xìnɡ</rt></ruby><ruby>地<rt>de</rt></ruby><ruby>回<rt>huí</rt></ruby><ruby>家<rt>jiā</rt></ruby><ruby>了<rt>le</rt></ruby></span>。</p></div>
+</div>
+				</div>
+</div>
+<div id="p8">
+				<div class="book-content" style="background-image:url('./pages/assets/bg1.jpg')">
+<div style="position:absolute;top:55px;left:0"><img src="./pages/assets/sun.gif" /></div>
+<div style="position:absolute;top:320px;left:0px"><img class="reload" src="./pages/p8/8c.gif" /></div>
+<div style="position:absolute;top:230px;left:20px"><img src="./pages/assets/cherry.png" class="cherry" /></div>
+<div style="position:absolute;top:200px;left:110px"><img src="./pages/assets/cherry.png" class="cherry" /></div>
+<div style="position:absolute;top:280px;left:100px"><img src="./pages/assets/cherry.png" class="cherry" /></div>
+<div style="position:absolute;top:250px;left:500px"><img src="./pages/assets/cherry.png" class="cherry" /></div>
+<div style="position:absolute;top:250px;left:200px"><img src="./pages/assets/cherry.png" class="cherry" /></div>
+<div style="position:absolute;top:280px;left:580px"><img src="./pages/assets/cherry.png" class="cherry" /></div>
+<div style="position:absolute;top:190px;left:570px"><img src="./pages/assets/cherry.png" class="cherry" /></div>
+<div style="position:absolute;top:230px;left:650px"><img src="./pages/assets/cherry.png" class="cherry" /></div>
+<div class="text-block text-block-fo" style="width:80%;height:25%">
+<div class="text simp-p chfont"><p><span class='word-8 words w8-1' data-start='0'><ruby>第<rt>dì</rt></ruby><ruby>三<rt>sān</rt></ruby><ruby>天<rt>tiān</rt></ruby></span>，<span class='word-8 words w8-2' data-start='1.720000'><ruby>它<rt>tā</rt></ruby><ruby>饿<rt>è</rt></ruby><ruby>了<rt>le</rt></ruby></span>。<span class='word-8 words w8-3' data-start='2.960000'><ruby>它<rt>tā</rt></ruby><ruby>找<rt>zhǎo</rt></ruby><ruby>到<rt>dào</rt></ruby><ruby>了<rt>le</rt></ruby><ruby>很<rt>hěn</rt></ruby><ruby>多<rt>duō</rt></ruby><ruby>樱<rt>yīnɡ</rt></ruby><ruby>桃<rt>táo</rt></ruby></span>。</p></div>
+<div class="text trad-p trfont"><p><span class='word-8 words w8-1' data-start='0'><ruby>第<rt>dì</rt></ruby><ruby>三<rt>sān</rt></ruby><ruby>天<rt>tiān</rt></ruby></span>，<span class='word-8 words w8-2' data-start='1.720000'><ruby>它<rt>tā</rt></ruby><ruby>餓<rt>è</rt></ruby><ruby>了<rt>le</rt></ruby></span>。<span class='word-8 words w8-3' data-start='2.960000'><ruby>它<rt>tā</rt></ruby><ruby>找<rt>zhǎo</rt></ruby><ruby>到<rt>dào</rt></ruby><ruby>了<rt>le</rt></ruby><ruby>很<rt>hěn</rt></ruby><ruby>多<rt>duō</rt></ruby><ruby>櫻<rt>yīnɡ</rt></ruby><ruby>桃<rt>táo</rt></ruby></span>。</p></div>
+</div>
+				</div>
+</div>
+<div id="p9">
+				<div class="book-content" style="background-image:url('./pages/assets/bg1.jpg')">
+<div style="position:absolute;top:55px;left:0"><img src="./pages/assets/sun.gif" /></div>
+<div style="position:absolute;top:350px;left:230px"><img class="reload" src="./pages/p9/9c.gif" /></div>
+<div style="position:absolute;top:230px;left:20px"><img src="./pages/assets/cherry.png" class="cherry" /></div>
+<div style="position:absolute;top:200px;left:110px"><img src="./pages/assets/cherry.png" class="cherry" /></div>
+<div style="position:absolute;top:280px;left:100px"><img src="./pages/assets/cherry.png" class="cherry" /></div>
+<div style="position:absolute;top:250px;left:500px"><img src="./pages/assets/cherry.png" class="cherry" /></div>
+<div style="position:absolute;top:250px;left:200px"><img src="./pages/assets/cherry.png" class="cherry" /></div>
+<div style="position:absolute;top:280px;left:580px"><img src="./pages/assets/cherry.png" class="cherry" /></div>
+<div style="position:absolute;top:190px;left:570px"><img src="./pages/assets/cherry.png" class="cherry" /></div>
+<div style="position:absolute;top:230px;left:650px"><img src="./pages/assets/cherry.png" class="cherry" /></div>
+<div class="text-block text-block-fo" style="width:80%;height:25%">
+<div class="text simp-p chfont"><p><span class='word-9 words w9-1' data-start='0'><ruby>于<rt>yú</rt></ruby><ruby>是<rt>shì</rt></ruby></span>，<span class='word-9 words w9-2' data-start='1.640000'><ruby>它<rt>tā</rt></ruby><ruby>滚<rt>ɡǔn</rt></ruby><ruby>了<rt>le</rt></ruby><ruby>几<rt>jǐ</rt></ruby><ruby>下<rt>xià</rt></ruby></span>。</p></div>
+<div class="text trad-p trfont"><p><span class='word-9 words w9-1' data-start='0'><ruby>於<rt>yú</rt></ruby><ruby>是<rt>shì</rt></ruby></span>，<span class='word-9 words w9-2' data-start='1.640000'><ruby>它<rt>tā</rt></ruby><ruby>滾<rt>ɡǔn</rt></ruby><ruby>了<rt>le</rt></ruby><ruby>幾<rt>jǐ</rt></ruby><ruby>下<rt>xià</rt></ruby></span>。</p></div>
+</div>
+				</div>
+</div>
+<div id="p10">
+				<div class="book-content" style="background-image:url('./pages/assets/bg1.jpg')">
+<div style="position:absolute;top:55px;left:0"><img src="./pages/assets/sun.gif" /></div>
+<div style="position:absolute;top:350px;left:230px"><img class="reload" src="./pages/p10/10c.gif" /></div>
+<div style="position:absolute;top:230px;left:20px"><img src="./pages/assets/cherry.png" class="cherry" /></div>
+<div style="position:absolute;top:510px;left:320px"><img src="./pages/assets/cherry.png" class="" /></div>
+<div style="position:absolute;top:200px;left:110px"><img src="./pages/assets/cherry.png" class="cherry" /></div>
+<div style="position:absolute;top:250px;left:500px"><img src="./pages/assets/cherry.png" class="cherry" /></div>
+<div style="position:absolute;top:250px;left:200px"><img src="./pages/assets/cherry.png" class="cherry" /></div>
+<div style="position:absolute;top:470px;left:330px"><img src="./pages/assets/cherry.png" class="" /></div>
+<div style="position:absolute;top:480px;left:270px"><img src="./pages/assets/cherry.png" class="" /></div>
+<div style="position:absolute;top:230px;left:650px"><img src="./pages/assets/cherry.png" class="cherry" /></div>
+<div class="text-block text-block-fo" style="width:80%;height:25%">
+<div class="text simp-p chfont"><p><span class='word-10 words w10-1' data-start='0'><ruby>扎<rt>zhā</rt></ruby><ruby>了<rt>le</rt></ruby><ruby>六<rt>liù</rt></ruby><ruby>个<rt>ɡè</rt></ruby><ruby>樱<rt>yīnɡ</rt></ruby><ruby>桃<rt>táo</rt></ruby></span>。<span class='word-10 words w10-2' data-start='2.530000'><ruby>它<rt>tā</rt></ruby><ruby>高<rt>ɡāo</rt></ruby><ruby>高<rt>ɡɑo</rt></ruby><ruby>兴<rt>xìnɡ</rt></ruby><ruby>兴<rt>xìnɡ</rt></ruby><ruby>地<rt>de</rt></ruby><ruby>回<rt>huí</rt></ruby><ruby>家<rt>jiā</rt></ruby><ruby>了<rt>le</rt></ruby></span>。</p></div>
+<div class="text trad-p trfont"><p><span class='word-10 words w10-1' data-start='0'><ruby>扎<rt>zhā</rt></ruby><ruby>了<rt>le</rt></ruby><ruby>六<rt>liù</rt></ruby><ruby>個<rt>ɡè</rt></ruby><ruby>櫻<rt>yīnɡ</rt></ruby><ruby>桃<rt>táo</rt></ruby></span>。<span class='word-10 words w10-2' data-start='2.530000'><ruby>它<rt>tā</rt></ruby><ruby>高<rt>ɡāo</rt></ruby><ruby>高<rt>ɡɑo</rt></ruby><ruby>興<rt>xìnɡ</rt></ruby><ruby>興<rt>xìnɡ</rt></ruby><ruby>地<rt>de</rt></ruby><ruby>回<rt>huí</rt></ruby><ruby>家<rt>jiā</rt></ruby><ruby>了<rt>le</rt></ruby></span>。</p></div>
+</div>
+				</div>
+</div>
+
+</div>
+	</section>
+
+  </div>
+</div>
+</div>
+<script type="text/javascript" src="./js/fastclick.js"></script>
+<script src="./js/jquery.js"></script>
+<script src="./js/modernizr.js"></script>
+<script src="./js/foundation.min.js"></script>
+<script src="./js/jquery.qtip.min.js"></script>
+<script type="text/javascript" src="./js/slick.min.js"></script>
+
+<script>
+	var dict = {
+		1: {
+			"word": "刺猬",
+			"meaning": "Hedgehog",
+			"pinyin": "cì wei",
+			"type": "noun"
+		},
+		2: {
+			"word": "東西",
+			"meaning": "Thing",
+			"pinyin": "dōnɡ xi",
+			"type": "noun"
+		}
+	};
+	var book_page = $('.book-slide>div').length;
+	var au = $('#read');
+	var bgm = $('#bgm');
+	var oldPage = 0;
+	var currentPage = 1;
+	var currentSlide = 0;
+	var duration = 0;
+	var oldPage = 0;
+	var currentPage = 0;
+	var sbookTitle;;
+	var tbookTitle;
+	var bgmToggle;
+	var readToggle;
+	var autoplayToggle;
+	var textToggle;
+	var textDisplay;
+	var textPinyin;
+	var dictToggle;
+	var isFrame = false;
+
+	var fTextDisplay = function(toggle, type) {
+		switch(type) {
+			case 't':
+				textDisplay = 't';
+				$('.text.simp-p').hide();
+				$('.text.trad-p').show();
+				$('#book-title').html(tbookTitle);
+				break;
+			default:
+				textDisplay = 's';
+				$('.text.trad-p').hide();
+				$('.text.simp-p').show();
+				$('#book-title').html(sbookTitle);
+		}
+		if (toggle) {
+			textToggle = true;
+			$('.text-block').removeClass('text-block-fo');
+			$('.text-block').addClass('text-block-fi');
+		} else {
+			textToggle = false;
+			$('.text-block').removeClass('text-block-fi');
+			$('.text-block').addClass('text-block-fo');
+		}
+	};
+	var fTextPinyin = function(toggle) {
+		if (toggle) {
+			textPinyin = true;
+			$('.text-block rt').show();
+		} else {
+			textPinyin = false;
+			$('.text-block rt').hide();
+		}
+	};
+	var fAutoplayToggle = function(toggle, current, duration, time) {
+		if (toggle) {
+			autoplayToggle = true;
+			if ((current < book_page) && (time >= duration)) {
+				window.setTimeout(function() {
+					$('.book-slide').slick('slickNext');
+				}, 2000);
+			}
+		} else {
+			autoplayToggle = false;
+		}
+	};
+	var fDictToggle = function(toggle) {
+		if (toggle) {
+			dictToggle = true;
+			$('.dict-icon').show();
+			$('.dict-text').css('background-color', '#3a3');
+		} else {
+			dictToggle = false;
+			$('.dict-icon').hide();
+			$('.dict-text').css('background-color', 'transparent');
+		}
+	};
+	var fReadToggle = function(toggle, auPath, current, time) {
+		var auSource;
+		if (((auPath === null) || (!auPath)) && ((current === null) || (!current)))
+			auSource = false;
+		else
+			auSource = true;
+		if ((time === null) || (!time)) time = au.currentTime;
+		if (toggle) {
+			readToggle = true;
+			if (auSource) {
+				if (document.getElementById('read').canPlayType('audio/mpeg')) {
+					au.attr('src', auPath + '/' + current + '.mp3');
+				} else {
+					au.attr('src', auPath + '/' + current + '.ogg');
+				}
+				au.on('loadedmetadata', function() {
+					au.prop('currentTime');
+					au.prop('muted', false);
+					au.trigger('play');
+				});
+			}
+console.log("chk-1:"+time);
+			au.prop('currentTime', parseFloat(time+0.01));
+			au.prop('muted', false);
+			au.trigger('play');
+		} else {
+			readToggle = false;
+			au.prop('muted', true);
+			au.trigger('pause');
+		}
+	};
+	var fBGMToggle = function(toggle) {
+		if (toggle) {
+			bgmToggle = true;
+			bgm.prop('currentTime', parseFloat(0.01));
+			bgm.prop('muted', false);
+			bgm.trigger('play');
+		} else {
+			bgmToggle = false;
+			bgm.prop('muted', true);
+			bgm.trigger('pause');
+		}
+	};
+	var fHookTime = function(current) {
+		$('#read').on('timeupdate', function() {
+			fAutoplayToggle(autoplayToggle, current, au.prop('duration'), au.prop('currentTime'));
+
+			$.each(eval('words'+current), function(id, time) {
+				if(((au.prop('currentTime') - time.start) > 0) && ((time.end - au.prop('currentTime')) > 0)) {
+					$(".word-"+current).removeClass("selected");
+					$("."+id).addClass("selected");
+				} else {
+					$("."+id).removeClass("selected");
+				}
+			});
+		});
+		$(".word-"+current)
+		.hover(function() {
+			$(this).addClass("selected");
+		}, function() {
+			$(this).removeClass("selected");
+		})
+		.on("click", function() {
+			au.prop('currentTime', (parseFloat($(this).data("start")+0.01)));
+			fReadToggle(readToggle, null, null, au.prop('currentTime'));
+		});
+	};
+
+	var init = function(skt, tkt, bmt, rdt, ayt, ttt, ttd, ttp, dtt, isf) {
+
+//console.log("SBK:"+skt+"-TBT:"+tkt+"-BGM:"+bmt+"-RDT:"+rdt+"-APT:"+ayt+"-TXT:"+ttt+"-TXD:"+ttd+"-TXP:"+ttp+"-DTT:"+dtt+"-ISF:"+isf);
+		sbookTitle = skt;
+		tbookTitle = tkt;
+		bgmToggle = bmt;
+		readToggle = rdt;
+		autoplayToggle = ayt;
+		textToggle = ttt;
+		textDisplay = ttd;
+		textPinyin = ttp;
+		dictToggle = dtt;
+		isFrame = isf;
+
+		fBGMToggle(bgmToggle);
+		fReadToggle(readToggle, './pages/p'+currentSlide, currentSlide, 0.01);
+		fAutoplayToggle(autoplayToggle, currentSlide, au.prop('duration'), au.prop('currentTime'));
+		fTextDisplay(textToggle, textDisplay);
+
+		fTextPinyin(textPinyin);
+		fDictToggle(dictToggle);
+
+		currentSlide = 0;
+		currentPage = currentSlide + 1;
+		window.parent.updatePage(currentPage, book_page);
+	};
+  var getPage = function() {
+    currentPage = currentSlide + 1;
+    return currentPage;
+  };
+  var getTotalPage = function() {
+    return book_page;
+  };
+	var gotoPage = function(page) {
+		$('.book-slide').slick('slickGoTo', page-1);
+		currentSlide = page;
+		currentPage = currentSlide + 1;
+		return currentPage;
+	};
+	var goFirstPage = function() {
+		$('.book-slide').slick('slickGoTo', 0);
+		currentSlide = 0;
+		currentPage = currentSlide + 1;
+		return currentPage;
+	};
+	var goLastPage = function() {
+		$('.book-slide').slick('slickGoTo', book_page-1);
+		currentSlide = book_page -1;
+		currentPage = currentSlide + 1;
+		return currentPage;
+	};
+	var bgmOn = function() {
+		fBGMToggle(true);
+	};
+	var bgmOff = function() {
+		fBGMToggle(false);
+	};
+	var readOn = function() {
+		fReadToggle(true, './pages/p'+currentSlide, currentSlide, 0.01);
+	};
+	var readOff = function() {
+		fReadToggle(false, './pages/p'+currentSlide, currentSlide, 0.01);
+	};
+	var pauseRead = function() {
+		readDefault = readToggle;
+		readToggle = false;
+		console.log('pauseRead');
+		fReadToggle(readToggle, './assets', currentSlide, au.prop('currentTime'));
+	};
+	var autoplayOn = function() {
+		fAutoplayToggle(true, currentSlide, au.prop('duration'), au.prop('currentTime'));
+	};
+	var autoplayOff = function() {
+		fAutoplayToggle(false, currentSlide, au.prop('duration'), au.prop('currentTime'));
+	};
+	var showDict = function() {
+		fDictToggle(true);
+	};
+	var hideDict = function() {
+		fDictToggle(false);
+	};
+	var showPinyin = function() {
+		fTextPinyin(true);
+	};
+	var hidePinyin = function() {
+		fTextPinyin(false);
+	};
+	var showText = function(type) {
+		fTextDisplay(true, type);
+	};
+	var hideText = function() {
+		fTextDisplay(false, textDisplay);
+	};
+	var changeText = function(type) {
+		fTextDisplay(textToggle, type);
+		return {display: textDisplay, toggle: textToggle};
+	};
+
+	$(window).load(function() {
+		FastClick.attach(document.body);
+		$('.tt-hook').click(function(e) {
+			e.preventDeafault();
+		});
+		$('.qt-hook').each(function() {
+			var qtObj = dict[$(this).data('dict')];
+			console.log(qtObj);
+			$(this).qtip({
+				content: {
+					text: "<div class='tt-content'><div>"+qtObj['word']+"</div><div>"+qtObj['meaning']+"</div><div>"+qtObj['pinyin']+"</div><div>"+qtObj['type']+"</div></div>"
+				}
+			});
+		});
+		$('#play-start').css('background-image', 'url("css/images/play-button.png")');
+
+
+		$('#play-start').on('click', function() {
+			$('#play-overlay').hide();
+			fHookTime(0);
+			if (au !== null) fReadToggle(readToggle, './pages/p0', 0, 0.01);
+			if (bgm !== null) fBGMToggle(bgmToggle);
+		});
+
+		$(document).foundation();
+
+		$('.book-slide').slick({
+				infinite: false,
+				arrows: true,
+				respondTo: 'window',
+				autoplay: false,
+				autoplaySpeed: 3000,
+				fade: true,
+				prevArrow: '<div class="slick-prev"></div>',
+				nextArrow: '<div class="slick-next"></div>'
+			});
+
+		$('.book-slide').on('beforeChange', function(event, slick, current) {
+			oldPage = current;
+		});
+		$('.book-slide').on('afterChange', function(event, slick, current) {
+			if (current !== oldPage) {
+				currentSlide = current;
+				currentPage = currentSlide + 1;
+				fReadToggle(readToggle, './pages/p'+currentSlide, currentSlide, 0.01);
+				fHookTime(currentSlide);
+				var d = new Date();
+				$('#p'+currentSlide+' .reload').attr('src', $('#p'+currentSlide+' .reload').attr('src') + '?' + d.getTime());
+				if (currentSlide < (book_page - 1)) {
+					fAutoplayToggle(autoplayToggle, currentSlide, au.prop('duration'), au.prop('currentTime'));
+				} else
+					fAutoplayToggle(false);
+				window.parent.updatePage(currentPage, book_page);
+			};
+		});
+	});
+
+</script>
+</body>
+</html>

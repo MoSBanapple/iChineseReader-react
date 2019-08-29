@@ -1,0 +1,59 @@
+Content
+
+init(sBookTitle, tBookTitle, bgmToggle, readToggle, autoplayToggle, textToggle, textDisplay, textPinyin, dictToggle)
+- sBookTitle: Book Title in Simplified Character (text)
+- tBookTitle: Book Title in Traditional Character (text)
+- bgmToggle: BGM setting (true/false)
+- readToggle: Reading setting (true/false)
+- autoplayToggle: Autoplay setting (true/false)
+- textToggle: Text setting (true/false)
+- textDisplay: Display text setting (s/t)
+- textPinyin: Pinyin setting (true/false)
+- dictToggle: Dictionary setting (true/false)
+
+getPage()
+- return: {page:Current_Page, total:Book_Total_Pages}
+
+gotoPage(page)
+- return Current_Page
+
+goFirstPage()
+- return Current_Page
+
+goLastPage()
+- return Current_Page
+
+bgmOn()
+
+bgmOff()
+
+readOn()
+
+readOff()
+
+autoplayOn()
+
+autoplayOff()
+
+showDict()
+
+hideDict()
+
+showPinyin()
+
+hidePinyin()
+
+showText(type)
+- type: 's' for Simplified, 't' for Traditional
+
+hdieText()
+
+changeText(type)
+- type: 's' for Simplified, 't' for Traditional
+- return: {display:Text_Display, toggle:Text_Toggle}
+
+There is a function needs to be placed in parent app in order to update the pagination info when a page is flipped:
+
+updatePage(page, total)
+- page: Current_page
+- total: Book_Total_Pages

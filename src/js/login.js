@@ -5,6 +5,11 @@
 	import cookie from 'react-cookies';
 	import {BASE_URL} from './common';
 	import Modal from 'react-modal';
+	
+	
+	function createMarkup() {
+		return {__html: '<button className="orangeButton" onClick={this.loginClick}>Hitme</button>'};
+	}
 
     export default class Login extends React.Component {
 
@@ -155,6 +160,7 @@
 			Forgot Password
 			</button>
 			<button className = "loginButton" type="submit" onClick = {this.loginClick}>Login</button>
+			<div style={{backgroundImage: "  url(https://resources.ichinesereader.com/books/BB0009/assets/0.jpg)", height: " 50px",}}>ablong</div>
 			</div>
 			
 			<Modal

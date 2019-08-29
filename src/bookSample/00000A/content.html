@@ -1,0 +1,74 @@
+
+<!DOCTYPE html>
+<html class="no-touch">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, maximum-scale=1" />
+<title>Test Book in English</title>
+<link rel="stylesheet" href="../css/foundation.min.css" />
+<link rel="stylesheet" href="../css/slick.css" />
+<link rel="stylesheet" href="../css/slick-theme.css" />
+<link rel="stylesheet" href="../css/iframe.css" /><style>
+html { font-size:32px !important; }
+.no-touch .words:hover { color: #f00; cursor: pointer; }
+.words.selected { color: #f00; cursor: pointer; }
+.book-content { height: 984px; width: 768px; }
+#content-0 {background-image: url(./assets/0.jpg);background-size: contain;height: 984px;width: 768px;}.book-content {height: 984px;width: 768px;}#textbox-1_1 {position: absolute; left: 95px; top: 320px; width: 600px; height: 620px;}#content-1 {background-image: url(./assets/1.jpg);background-size: contain;height: 984px;width: 768px;}.book-content {height: 984px;width: 768px;}#textbox-2_1 {position: absolute; left: 95px; top: 420px; width: 580px; height: 500px;}#content-2 {background-image: url(./assets/2.jpg);background-size: contain;height: 984px;width: 768px;}.book-content {height: 984px;width: 768px;}#textbox-3_1 {position: absolute; left: 40px; top: 200px; width: 690px; height: 760px;}#content-3 {background-image: url(./assets/3.jpg);background-size: contain;height: 984px;width: 768px;}.book-content {height: 984px;width: 768px;}#textbox-4_1 {position: absolute; left: 40px; top: 200px; width: 690px; height: 760px;}#content-4 {background-image: url(./assets/4.jpg);background-size: contain;height: 984px;width: 768px;}.book-content {height: 984px;width: 768px;}</style>
+</head>
+<body>
+<audio id="read" class="read" src="" preload="auto"></audio>
+<div id="book-view"><div id="speed-control"><div id="play-slow" class="play-ctrl"></div><div id="play-normal" class="play-ctrl"></div><div id="play-fast" class="play-ctrl"></div></div>
+	<div id="play-overlay" class="overlay">
+		<div id="play-start"></div>
+	</div>
+	<div class="outer-wrap">
+		<section id="main-section">
+			<div class="book-slide"><div id="p0"><!--// Begin Text Block //--><div id="content-0" class="book-content"><!--// Page Content //--><!--// Begin Text Block //--><!--// End Text Block //--></div></div><div id="p1"><!--// Begin Text Block //--><div id="content-1" class="book-content"><!--// Page Content //--><!--// End Text Block //--></div></div><div id="p2"><!--// Begin Text Block //--><div id="content-2" class="book-content"><!--// Page Content //--><!--// End Text Block //--></div></div><div id="p3"><!--// Begin Text Block //--><div id="content-3" class="book-content"><!--// Page Content //--><!--// End Text Block //--></div></div></div></section></div></div><script src="../js/modernizr.js"></script><script src="../js/fastclick.js"></script><script src="../js/jquery.min.js"></script><script src="../js/foundation.min.js"></script><script src="../js/foundation.reveal.js"></script><script src="../js/slick.min.js"></script><script>var words0 = {"w0-1": {start: 0,end: 2}
+};var words1 = {"w1-1": {start: 0,end: 4.98},
+"w1-2": {start: 4.99,end: 8.88},
+"w1-3": {start: 8.89,end: 10.31},
+"w1-4": {start: 10.32,end: 14.98},
+"w1-5": {start: 14.99,end: 18.21},
+"w1-6": {start: 18.22,end: 20.04},
+"w1-7": {start: 20.05,end: 22.99},
+"w1-8": {start: 23,end: 24.58},
+"w1-9": {start: 24.59,end: 25.26}
+};var words2 = {"w2-1": {start: 0,end: 4.59},
+"w2-2": {start: 4.6,end: 7.83},
+"w2-3": {start: 7.84,end: 9.44},
+"w2-4": {start: 9.45,end: 11.32},
+"w2-5": {start: 11.33,end: 13.9},
+"w2-6": {start: 13.91,end: 16.62},
+"w2-7": {start: 16.63,end: 18.52},
+"w2-8": {start: 18.53,end: 19.15},
+"w2-9": {start: 19.16,end: 19.99}
+};var words3 = {"w3-1": {start: 0,end: 3.71},
+"w3-2": {start: 3.72,end: 9.79},
+"w3-3": {start: 9.8,end: 12.58},
+"w3-4": {start: 12.59,end: 14.32},
+"w3-5": {start: 14.33,end: 18.88},
+"w3-6": {start: 18.89,end: 19.72},
+"w3-7": {start: 19.73,end: 29.45},
+"w3-8": {start: 29.46,end: 31.77},
+"w3-9": {start: 31.78,end: 35.71},
+"w3-10": {start: 35.72,end: 39.75}
+};var words4 = {"w4-1": {start: 0,end: 1.78},
+"w4-2": {start: 1.79,end: 6.39},
+"w4-3": {start: 6.4,end: 8.54},
+"w4-4": {start: 8.55,end: 12.96},
+"w4-5": {start: 12.97,end: 14.7},
+"w4-6": {start: 14.71,end: 17.31},
+"w4-7": {start: 17.32,end: 19.09},
+"w4-8": {start: 19.1,end: 23.84},
+"w4-9": {start: 23.85,end: 26.59},
+"w4-10": {start: 26.6,end: 28.80},
+"w4-11": {start: 28.81,end: 32.49},
+"w4-12": {start: 32.5,end: 33.29},
+"w4-13": {start: 33.3,end: 35.76},
+"w4-14": {start: 35.77,end: 36},
+"w4-15": {start: 36.01,end: 37.15},
+"w4-16": {start: 37.16,end: 39.7}
+};</script>
+<script src="../js/book.js"></script>
+</body>
+</html>

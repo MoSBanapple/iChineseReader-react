@@ -3,6 +3,7 @@ form {border: 3px solid #f1f1f1;}
 
 .quizBody{
 	background-color: #51C2E4;
+	
 }
 
 .quizClose{
@@ -18,24 +19,38 @@ form {border: 3px solid #f1f1f1;}
 	left: 50%;
 	margin-left: -450px;
 	width: 900px;
-	height: 600px;
+	height: 800px;
 	position: relative;
 	border-style: solid;
 }
 
 .questionTab{
-	padding-left: 10px;
+	padding: 10px 15px;
 	cursor: pointer;
 	display: inline;
 	position: relative;
+	
 }
 
-.questionTabSelected{
-	padding-left: 10px;
-
+.questionTabAnswered{
+	padding: 10px 15px;
+	background-color: yellow;
 	display: inline;
 	position: relative;
 	font-weight: bold;
+
+	border-radius: 10px;
+}
+
+.questionTabSelected{
+	padding: 10px 15px;
+	background-color: #4CAF50;
+	display: inline;
+	position: relative;
+	font-weight: bold;
+	color: white;
+	border-radius: 10px;
+	
 }
 
 .audioButton{
@@ -47,4 +62,9 @@ form {border: 3px solid #f1f1f1;}
 .diverImage{
 	text-align: center;
 	display: block;
+}
+
+.quizImage{
+	max-width: 500px;
+	max-height: 600px;
 }

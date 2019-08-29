@@ -8,7 +8,7 @@
     <!--[if lt IE 9]><script src="https://html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
     <link rel="stylesheet" href="../css/foundation.min.css" />
 <link rel="stylesheet" type="text/css" href="../css/slick.css"/>
-<link rel="stylesheet" type="text/css" href="../css/lbook.css"/>
+<link rel="stylesheet" type="text/css" href="../css/book.css"/>
 
 <style>
 body {
@@ -17,24 +17,24 @@ body {
 	position: relative;
 }
 #content-wrapper {
-	width: 1024px;
-	height: 728px;
+	width: 768px;
+	height: 1024px;
 	overflow: hidden;
 	margin: 0 auto;
 	position: relative;
 }
 #book-wrapper {
-	width: 1024px;
-	height: 728px;
+	width: 768px;
+	height: 1024px;
 }
 #content-frame {
-	width: 1024px;
-	height: 728px;
+	width: 768px;
+	height: 1024px;
 	border: none;
 	overflow: hidden;
 }
 .menu-wrapper {
-	width: 1024px;
+	width: 768px;
 	margin: 0 auto;
 	position: absolute;
 	top: -231px;
@@ -42,7 +42,7 @@ body {
 .menu {
 	position: relative;
 	z-index: 1005;
-	width: 1024px;
+	width: 768px;
 	margin: 0 auto;
 	transform: translate(0, 0px);
 	transition: all .5s;
@@ -64,7 +64,7 @@ body {
 }
 #menu-off {
 	position: absolute;
-	width: 1024px;
+	width: 768px;
 	height: 100%;
 	top: 0;
 	z-index: 1004;
@@ -372,10 +372,8 @@ console.log('update-'+page+"=="+total);
 	$(window).load(function() {
 		FastClick.attach(document.body);
 
-        if(typeof frm.init !== 'undefined'){
-            frm.init(sbookTitle, tbookTitle, bgmToggle, readToggle, autoplayToggle, textToggle, textDisplay, textPinyin, dictToggle);
-        }
-
+		frm.init(sbookTitle, tbookTitle, bgmToggle, readToggle, autoplayToggle, textToggle, textDisplay, textPinyin, dictToggle);
+	
 
 		$('#page-number')
 		.on('focusin', function() {
