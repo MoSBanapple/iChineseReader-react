@@ -12,9 +12,9 @@ import left_arrow from "../images/arrow-L.png";
 import right_arrow from "../images/arrow-R.png";
 import recording_button from "../images/icon_voice_recording.png";
 import settings_button from "../images/btn_hamburger_menu.png";
-
 import bookmark_button from "../images/bookmark.png";
-
+import on_switch from "../images/on_switch.png";
+import off_switch from "../images/off_switch.png";
 
 function getBetween(input, left, right){
 	let firstIndex = input.indexOf(left) + left.length;
@@ -28,10 +28,6 @@ String.prototype.toCamelCase = function() {
     if (p2) return p2.toUpperCase();
     return p1.toLowerCase();
   });
-};
-
-function createMarkup(input){
-	return {__html: input};
 };
 
 
@@ -141,9 +137,31 @@ export default class BookContainer extends React.Component {
 				return;
 			}
 			
+			let nextTextState = this.state.currentText;
+			if (!parsed.book.bookFeatures.simplified && this.state.currentText == "Simplified"){
+				nextTextState = "Traditional";
+			} else if (!parsed.book.bookFeatures.traditional && this.state.currentText == "Traditional"){
+				nextTextState = "Simplified";
+			}
+			
+			let nextAudioState = this.state.currentAudio;
+			if (!(parsed.book.language == "Mandarin" || parsed.book.bilingual) && this.state.currentAudio == "Mandarin"){
+				nextAudioState = "Cantonese";
+			} else if (!(parsed.book.language == "Cantonese" || parsed.book.bilingual) && this.state.currentAudio == "Cantonese"){
+				nextAudioState = "Mandarin";
+			}
+			
+			let nextPinyin = this.state.currentPinyin;
+			if (!parsed.book.bookFeatures.pinyin){
+				nextPinyin = false;
+			}
+			
 			this.setState({
 				bookInfo: parsed,
 				finishedBook: parsed.readComplete,
+				currentText: nextTextState,
+				currentAudio: nextAudioState,
+				currentPinyin: nextPinyin,
 			}, function () {
 				this.retrieveContentInfo();
 				this.retrieveBookmark();
@@ -622,6 +640,16 @@ export default class BookContainer extends React.Component {
 		this.setState({currentAudio: event.target.value});
 	};
 	
+	pinyinChange = () => {
+		if (this.state.bookInfo.book.bookFeatures.pinyin){
+			this.setState({currentPinyin: !this.state.currentPinyin,});
+		}
+	};
+	
+	autoplayChange = () => {
+		this.setState({autoplay: !this.state.autoplay,});
+	};
+	
 	renderTextOptions(){
 		let output = [];
 		if (this.state.bookInfo.book.bookFeatures.simplified){
@@ -644,6 +672,22 @@ export default class BookContainer extends React.Component {
 		}
 		output.push(<span><input type="radio" name="audioRadio" value="No_audio" checked={this.state.currentAudio == "No_audio"} onChange={this.audioOptionChange}/>No Audio</span>);
 		return output;
+	};
+	
+	renderPinyinButton(){
+		if (this.state.currentPinyin){
+			return(<img className="clickableImage" onClick = {this.pinyinChange} src={on_switch}/>);
+		} else {
+			return(<img className="clickableImage" onClick = {this.pinyinChange} src={off_switch}/>);
+		}
+	};
+	
+	renderAutoplayButton(){
+		if (this.state.autoplay){
+			return(<img className="clickableImage" onClick = {this.autoplayChange} src={on_switch}/>);
+		} else {
+			return(<img className="clickableImage" onClick = {this.autoplayChange} src={off_switch}/>);
+		}
 	};
 	
 	render() {
@@ -698,7 +742,9 @@ export default class BookContainer extends React.Component {
 				<h2>Audio Settings</h2>
 				{this.renderAudioOptions()}
 				<h2>Autoplay</h2>
+				{this.renderAutoplayButton()}
 				<h2>Pinyin</h2>
+				{this.renderPinyinButton()}
 				</Modal>
 				
 				<div className="bookHolder">

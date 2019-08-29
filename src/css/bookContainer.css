@@ -63,3 +63,7 @@
 	top: 15px;
 	z-index: 1;
 }
+
+.clickableImage{
+	cursor: pointer;
+}
