@@ -1,68 +1,23 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+#Overview
 
-## Available Scripts
+This is the student pages of the iChineseReader website, remade using reactjs.
 
-In the project directory, you can run:
+#Current issues
 
-### `npm start`
+Derek Zhang, 8-30-2019
 
-Runs the app in the development mode.<br>
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+* Avatar retrieval from https://ichinesereader.com/storage/avatar does not work. If you solve this, please implement the avatar into avatarModule.js. Retrieval works when pinging from a http tester online, so I don't know why it isn't working here.
 
-The page will reload if you make edits.<br>
-You will also see any lint errors in the console.
+* Audio recording on book page (bookContainer.js) is not yet implemented.
 
-### `npm test`
+* User is unable to add book to folder from book page.
 
-Launches the test runner in the interactive watch mode.<br>
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+* Badge has not been added to profile page.
 
-### `npm run build`
+* Visuals could use work - improve where you can.
 
-Builds the app for production to the `build` folder.<br>
-It correctly bundles React in production mode and optimizes the build for the best performance.
+* Sometimes text in books can be improperly formatted due to how books are implemented. If you can find a way to implement the reader using content.html or index.html directly, do that.
 
-The build is minified and the filenames include the hashes.<br>
-Your app is ready to be deployed!
+* Bookmarks break when more than one is made on the same book. This is a back-end error, not front-end.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (Webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
-
-### Analyzing the Bundle Size
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
-
-### Making a Progressive Web App
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
-
-### Advanced Configuration
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
-
-### Deployment
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
-
-### `npm run build` fails to minify
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+* Text/reading speeds have not yet been implemented.

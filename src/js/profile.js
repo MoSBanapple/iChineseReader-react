@@ -15,6 +15,14 @@
 			super(props);
 			let info = cookie.load('userInfo', {doNotParse: true});
 			if (info == undefined){
+			let newAuth = cookie.load('nanhaiIndividualSession', {doNotParse: true});
+			if (newAuth){
+				info = {
+					authToken: newAuth,
+				};
+			}
+		}
+			if (info == undefined){
 				this.state = {
 					userInfo: undefined,
 				}

@@ -60,6 +60,14 @@ export default class BookContainer extends React.Component {
 		super(props);
 		let info = cookie.load('userInfo', {doNotParse: true});
 		if (info == undefined){
+			let newAuth = cookie.load('nanhaiIndividualSession', {doNotParse: true});
+			if (newAuth){
+				info = {
+					authToken: newAuth,
+				};
+			}
+		}
+		if (info == undefined){
 			this.state = {
 				userInfo: undefined,
 			}
@@ -198,7 +206,7 @@ export default class BookContainer extends React.Component {
 				
 			});
 		}.bind(this)
-		let url = BASE_URL + "/studentmanager/writing/" + this.getUserInfo().user.userName + "/" + this.state.bookId;
+		let url = BASE_URL + "/studentmanager/writing/" + this.profileInfo.userName + "/" + this.state.bookId;
 		request.open("GET", url, asy);
 		request.setRequestHeader("AuthToken", auth);
 		request.send(null);
@@ -696,7 +704,7 @@ export default class BookContainer extends React.Component {
 			bookId: this.state.bookId,
 			text: this.state.writingText,
 			token: auth,
-			userId: this.getUserInfo().user.userName,
+			userId: this.profileInfo.userName,
 		});
 		let url = BASE_URL + "/studentmanager/writing"; 
 		request.open("POST", url, asy);

@@ -65,9 +65,25 @@
 
     export default class Home extends React.Component {
       constructor(props) {
-        super(props);
+		  super(props);
+        let info = cookie.load('userInfo', {doNotParse: true});
+		if (info == undefined){
+			let newAuth = cookie.load('nanhaiIndividualSession', {doNotParse: true});
+			if (newAuth){
+				info = {
+					authToken: newAuth,
+				};
+			}
+		}
+		cookie.save('prevPage', this.props.location.pathname, { path: '/'});
+		if (info == undefined){
+			this.state = {
+				userInfo: undefined,
+			}
+			return;
+		}
 		this.state = {
-			userInfo: cookie.load('userInfo', {doNotParse: true}),
+			userInfo: info,
 			profileInfo: null,
 			nickName: null,
 			points: null,

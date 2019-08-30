@@ -42,6 +42,7 @@
 			  if (request.status == 200){
 				  alert("Login successful");
 				  cookie.save('userInfo', request.responseText, { path: '/'});
+				  cookie.save('nanhaiIndividualSession', JSON.parse(request.responseText).authToken, { path: '/'});
 				  this.setState({loginSuccess: true, userInfo: request.responseText});
 			  } else {
 				  alert("Login failed: error " + request.status.toString())
