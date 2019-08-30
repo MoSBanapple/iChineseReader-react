@@ -1,8 +1,8 @@
-#Overview
+# Overview
 
 This is the student pages of the iChineseReader website, remade using reactjs.
 
-#Current issues
+# Current issues
 
 Derek Zhang, 8-30-2019
 
