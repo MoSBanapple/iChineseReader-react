@@ -123,7 +123,7 @@ export default class OpenReading extends React.Component{
 		request.onload = function () {
 			var parsed = JSON.parse(request.responseText);
 			if (request.status != 200){
-				alert(request.responseText);
+				alert(parsed.message[0].message);
 				this.setState({userInfo: undefined});
 				return;
 			}

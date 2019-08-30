@@ -17,6 +17,7 @@
 	zoom: 83%;
 	position: relative;
 	top: 13px;
+	overflow-wrap: break-word;
 }
 
 .iconCol{
@@ -47,4 +48,7 @@ top: 10px;
 width: 85px;
 height: 50px;
 left: 5px;
+}
+
+.titleText{
 }

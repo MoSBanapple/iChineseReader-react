@@ -57,7 +57,7 @@ class BookView extends React.Component {
 		   {newArrival}
 				</div>
 				</a>
-				<p>{this.props.title}</p>
+				<p className="titleText" >{this.props.title}</p>
 			</div>
 		);
 	};

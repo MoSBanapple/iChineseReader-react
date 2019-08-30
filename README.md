@@ -12,7 +12,7 @@ Derek Zhang, 8-30-2019
 
 * User is unable to add book to folder from book page.
 
-* Badge has not been added to profile page.
+* Badge has not been added to profile page, nor badge login to the login page.
 
 * Visuals could use work - improve where you can.
 

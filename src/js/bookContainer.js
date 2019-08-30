@@ -103,7 +103,7 @@ export default class BookContainer extends React.Component {
 		};
 		this.retrieveProfileInfo();
 		this.sendStartSession();
-		this.retrieveWritingInfo()
+		
 		
 	};
 	
@@ -118,7 +118,7 @@ export default class BookContainer extends React.Component {
 		request.onload = function () {
 			var parsed = JSON.parse(request.responseText);
 			if (request.status != 200){
-				alert("Getting profile error: " + request.responseText);
+				alert(parsed.message[0].message);
 				this.setState({userInfo: undefined});
 				return;
 			}
@@ -129,6 +129,7 @@ export default class BookContainer extends React.Component {
 				currentText: parsed.settings.language,
 				currentAudio: parsed.settings.lang,
 			}, function () {
+				this.retrieveWritingInfo();
 				this.retrieveBookInfo();
 			});
 		}.bind(this)
@@ -206,7 +207,7 @@ export default class BookContainer extends React.Component {
 				
 			});
 		}.bind(this)
-		let url = BASE_URL + "/studentmanager/writing/" + this.profileInfo.userName + "/" + this.state.bookId;
+		let url = BASE_URL + "/studentmanager/writing/" + this.state.profileInfo.userName + "/" + this.state.bookId;
 		request.open("GET", url, asy);
 		request.setRequestHeader("AuthToken", auth);
 		request.send(null);
@@ -704,7 +705,7 @@ export default class BookContainer extends React.Component {
 			bookId: this.state.bookId,
 			text: this.state.writingText,
 			token: auth,
-			userId: this.profileInfo.userName,
+			userId: this.state.profileInfo.userName,
 		});
 		let url = BASE_URL + "/studentmanager/writing"; 
 		request.open("POST", url, asy);
