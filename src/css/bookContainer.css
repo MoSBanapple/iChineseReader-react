@@ -19,7 +19,19 @@
 
 #writingModal{
 	text-align: center;
+	width: 40%;
+	height: 40%;
+	border: solid;
 }
+
+#bookSettingsModal{
+	width: 20%;
+	left: 20%;
+	border: solid;
+
+}
+
+
 
 #bookSettingsButton{
 	position: absolute;
@@ -29,8 +41,16 @@
 	height: 50px;
 }
 
-.writingArea{
+#bookmarkButton{
+	position: absolute;
+	left: 280px;
+	z-index: 1;
+	cursor: pointer;
+	height: 50px;
+}
 
+.writingArea{
+	border: solid 1px;
 	margin: 30px 40px;
 	
 	
@@ -67,3 +87,18 @@
 .clickableImage{
 	cursor: pointer;
 }
+
+.pollName {
+  line-height: 1em;
+  max-height: 2em; 
+}
+
+#quizButton{
+	position: absolute;
+	right: 200px;
+	z-index: 1;
+	cursor: pointer;
+	height: 70px;
+	top: -10px;
+}
+

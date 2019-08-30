@@ -160,7 +160,7 @@
 			Forgot Password
 			</button>
 			<button className = "loginButton" type="submit" onClick = {this.loginClick}>Login</button>
-			<div style={{backgroundImage: "  url(https://resources.ichinesereader.com/books/BB0009/assets/0.jpg)", height: " 50px",}}>ablong</div>
+			
 			</div>
 			
 			<Modal

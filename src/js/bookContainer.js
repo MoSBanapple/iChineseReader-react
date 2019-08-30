@@ -15,6 +15,9 @@ import settings_button from "../images/btn_hamburger_menu.png";
 import bookmark_button from "../images/bookmark.png";
 import on_switch from "../images/on_switch.png";
 import off_switch from "../images/off_switch.png";
+import quiz_button from "../images/btn_quiz_uncomplete.png";
+import quiz_unavailable from "../images/rsz_btn_quiz_disabled.png";
+
 
 function getBetween(input, left, right){
 	let firstIndex = input.indexOf(left) + left.length;
@@ -39,7 +42,6 @@ function stringToStyle(input){
 	cameled = cameled.replace(/,"[\s]*}/g, '}');
 	cameled = cameled.replace(/https":"/g, "https:");
 	cameled = cameled.replace(/\s/g,'')
-	console.log(cameled);
 	return JSON.parse(cameled);
 };
 
@@ -86,9 +88,12 @@ export default class BookContainer extends React.Component {
 			finishedBook: false,
 			finishedMessage: "",
 			autoplay: false,
+			thisPageAudio: null,
+			redText: null,
+			redStarts: 0,
+			
 		};
 		this.retrieveProfileInfo();
-		var log = console.log;
 		this.sendStartSession();
 		this.retrieveWritingInfo()
 		
@@ -156,6 +161,7 @@ export default class BookContainer extends React.Component {
 				nextPinyin = false;
 			}
 			
+			
 			this.setState({
 				bookInfo: parsed,
 				finishedBook: parsed.readComplete,
@@ -164,7 +170,7 @@ export default class BookContainer extends React.Component {
 				currentPinyin: nextPinyin,
 			}, function () {
 				this.retrieveContentInfo();
-				this.retrieveBookmark();
+				
 			});
 		}.bind(this)
 		let url = BASE_URL + "/superadmin/book/" + this.state.bookId;
@@ -210,9 +216,10 @@ export default class BookContainer extends React.Component {
 			if (request.responseText != ""){
 				console.log("got bookmark");
 				let parsed = JSON.parse(request.responseText);
-				this.setState({currentPage: parsed.page - 1});
+				this.changePage(parsed.page);
 			} else{
 				console.log("no bookmark");
+				this.changePage(0);
 			}
 		}.bind(this)
 		let url = BASE_URL + "/superadmin/bookmark/" + this.state.bookId;
@@ -233,6 +240,7 @@ export default class BookContainer extends React.Component {
 				bookContentRaw: request.responseText,
 			}, function () {
 				this.extractContent();
+				this.retrieveBookmark();
 			});
 		}.bind(this)
 		let url = this.state.bookInfo.book.bookContentLink;
@@ -263,23 +271,101 @@ export default class BookContainer extends React.Component {
 		request.send(postBody);
 	}
 	
+	sendBookmark = () => {
+		let auth = this.getUserInfo().authToken;
+		var asy = true;
+		var request = new XMLHttpRequest();
+		request.onload = function () {
+			var parsed = JSON.parse(request.responseText);
+			if (request.status != 200){
+				alert("Bookmark error: " + request.responseText);
+				return;
+			}
+			alert("Bookmark set for page " + this.state.currentPage);
+			
+		}.bind(this)
+		let url = BASE_URL + "/superadmin/bookmark/" + this.state.bookId + "/" + this.state.currentPage;
+		request.open("POST", url, asy);
+		request.setRequestHeader("AuthToken", auth);
+		request.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+		request.send(null);
+	};
+	
 	extractContent(){
 		var isChinese = require('is-chinese');
 		let parsed = this.state.bookContentRaw.replace(/\.\/assets/g, 
 		"https://resources.ichinesereader.com/books/" + this.state.bookInfo.book.bookCode + "/assets");
+		
 		parsed = parsed.replace(/\r?\n|\r/g, " ");
+		
+		let divStyles = parsed.match(/div\..*?{.*?}/g);
+		if (divStyles){
+			for (let style of divStyles){
+				console.log("Style: " + style);
+				let targetName = getBetween(style, "div.", "{");
+				let styleInsert = getBetween(style, "{", "}");
+				let newReg = new RegExp('<div class="' + targetName + '"', "g");
+				parsed = parsed.replace(newReg, '<div class="' + targetName + '" style="' + styleInsert + '" ');
+			}
+		}
+		
+		divStyles = parsed.match(/div#.*?{.*?}/g);
+		if (divStyles){
+			for (let style of divStyles){
+				//console.log("Style: " + style);
+				let targetName = getBetween(style, "div#", "{");
+				let styleInsert = getBetween(style, "{", "}");
+				let newReg = new RegExp('<div id="' + targetName + '"', "g");
+				parsed = parsed.replace(newReg, '<div id="' + targetName + '" style="' + styleInsert + '" ');
+			}
+		}
+		
+		let imgStyles = parsed.match(/img#.*?{.*?}/g);
+		if (imgStyles){
+			for (let style of imgStyles){
+				//console.log("Style: " + style);
+				let targetName = getBetween(style, "img#", "{");
+				let styleInsert = getBetween(style, "{", "}");
+				let newReg = new RegExp('<img id="' + targetName + '"', "g");
+				parsed = parsed.replace(newReg, '<img id="' + targetName + '" style="' + styleInsert + '" ');
+			}
+		}
+		
+		
+		
 		let content = parsed.match(/#content-[0-9]*[\s]*{(.*?)}/g);
 		let fontStr = parsed.match(/font-size:[0-9]*px/g)[0];
 		let fontSize = parseInt(getBetween(fontStr, ":", "px"));
-		console.log("Font size = " + fontSize);
+		//console.log("Font size = " + fontSize);
 		let pages = [];
 		for (let i = 0; i < content.length; i++){
 			let contentStyle = content[i].match(/{(.*?)}/)[0];
 			//let contentStyle = content[i];
-			console.log(contentStyle);
+			//console.log(contentStyle);
+			
+			let imageSearchReg = new RegExp('div id="content-' + i + '.*?End Text', "g");
+			let imageSearchArea = parsed.match(imageSearchReg);
+			let thisPageImages = null;
+			if (imageSearchArea){
+				thisPageImages = imageSearchArea[0].match(/<img.*?>/g);
+			}
+			
+			let audioTimingReg = new RegExp('"w' + i + '-[0-9]*?": {.*?}', "g");
+			let audioTimingStrings = parsed.match(audioTimingReg);
+			let audioStarts = null;
+			let audioEnds = null;
+			if (audioTimingStrings){
+				audioStarts = audioTimingStrings.map(thisString => {
+					return parseFloat(getBetween(thisString, "start:", ",end"));
+				});
+				audioEnds = audioTimingStrings.map(thisString => {
+					return parseFloat(getBetween(thisString, "end:", "}"));
+				});
+			}
+			
 			let textBoxReg = new RegExp("#textbox-" + i + "_[0-9]*[ ]*{(.*?)}", "g");
 			let textBoxes = parsed.match(textBoxReg);
-			console.log("Textboxes: " + textBoxes);
+			//console.log("Textboxes: " + textBoxes);
 			let textBoxStyles = null;
 			if (textBoxes){
 				textBoxStyles = textBoxes.map(thisBox => {
@@ -311,21 +397,33 @@ export default class BookContainer extends React.Component {
 				simpBoxStyles: simpBoxStyles,
 				tradBoxStyles: tradBoxStyles,
 				textBoxes: null,
+				pictures: thisPageImages,
+				audioStarts: audioStarts,
+				audioEnds: audioEnds,
 			}
 			if (isNaN(fontSize) || !textBoxes){
 				pages.push(thisPage);
 				continue;
 			}
+			let pageDivSearchReg = new RegExp('<div id="content-' + i + '.*?<div id="textbox-' + i, "g");
+			let pageDivSearch = parsed.match(pageDivSearchReg);
+			let pageDivStyle = null;
+			if (pageDivSearch){
+				pageDivStyle = pageDivSearch[0].match(/<div class=.*?>/g);
+				if (pageDivStyle){
+					pageDivStyle = pageDivStyle[0];
+				}
+			}
 			let endLoop = textBoxes.length;
 			for (let j = 1; j <= endLoop; j++){
-				console.log(i+", " + j);
+				//console.log(i+", " + j);
 				let divReg = new RegExp('<div id="textbox-' + i + '_' + j + '.*?<div id="textbox-' + i + '-' + (j+1), "g");
 				let divStr = parsed.match(divReg);
 				if (!divStr){
 					divReg = new RegExp('<div id="textbox-' + i + '_' + j + '.*?End Text Block', "g");
 					divStr = parsed.match(divReg);
 				}
-				console.log(divStr);
+				//console.log(divStr);
 				if (!divStr){
 					textBoxes[j-1] = {
 						simpSentences: null,
@@ -335,11 +433,33 @@ export default class BookContainer extends React.Component {
 					continue;
 				}
 				divStr = divStr[0];
+				let simpBlock = divStr.match(/<div class="text simp-p .*?(<div class="text trad-p|End Text)/g);
 				
+				if (simpBlock){
+					for (let k = 0; k < simpBlock.length; k++){
+						if (simpBlock[k].includes("End Text")){
+							simpBlock[k] = simpBlock[k].replace(/<\/div>.*?<!--\/\/ End Text/g, "");
+						} else {
+							simpBlock[k] = simpBlock[k].replace(/<div class="text trad-p/g, "");
+						}
+					}
+				}
+				let tradBlock = divStr.match(/<div class="text trad-p .*?(<div class="text trad-p|End Text)/g);
 				
+				if (tradBlock){
+					for (let k = 0; k < tradBlock.length; k++){
+						if (tradBlock[k].includes("End Text")){
+							tradBlock[k] = tradBlock[k].replace(/<\/div>.*?<!--\/\/ End Text/g, "");
+						} else {
+							tradBlock[k] = tradBlock[k].replace(/<div class="text trad-p/g, "");
+						}
+					}
+				}
+				/*
 				let wordBlocks = divStr.match(/<span id=.*?;<\/span>|<div class='para'><\/div>/g);
 				let sentences = [];
 				sentences = wordBlocks;
+				*/
 				/*
 				let pinyins = [];
 				for (let block of wordBlocks){
@@ -365,30 +485,35 @@ export default class BookContainer extends React.Component {
 					pinyins = null;
 				}
 				*/
+				/*
 				let simpChars = null;
 				let tradChars = null;
 				if (this.state.bookInfo.book.bookFeatures.simplified && this.state.bookInfo.book.bookFeatures.traditional && sentences){
 					simpChars = sentences.slice(0, sentences.length/2);
 					tradChars = sentences.slice(sentences.length/2, sentences.length);
-					/*
-					if (pinyins){
-						pinyins = pinyins.slice(0, pinyins.length/2);
-					}
-					*/
 				} else if (this.state.bookInfo.book.bookFeatures.simplified && sentences){
 					simpChars = sentences;
 				} else if (this.state.bookInfo.book.bookFeatures.traditional && sentences){
 					tradChars = sentences;
 				}
+				*/
+				if (pageDivStyle){
+					for (let k = 0; k < simpBlock.length; k++){
+						simpBlock[k] = pageDivStyle + simpBlock[k] + "</div>";
+					}
+					for (let k = 0; k < tradBlock.length; k++){
+						tradBlock[k] = pageDivStyle + tradBlock[k] + "</div>";
+					}
+				}
 				textBoxes[j-1] = {
-					simpSentences: simpChars,
-					tradSentences: tradChars,
+					simpSentences: simpBlock,
+					tradSentences: tradBlock,
 					//pinyins: pinyins,
 				};
-				console.log(textBoxes[j-1]);
+				//console.log(textBoxes[j-1]);
 			}
 			thisPage.textBoxes = textBoxes;
-			console.log(thisPage);
+			//console.log(thisPage);
 			pages.push(thisPage);
 		}
 		this.setState({
@@ -416,17 +541,17 @@ export default class BookContainer extends React.Component {
 		let contentStyle = {};
 		if (targetPage.contentStyle != "{}"){
 			contentStyle = stringToStyle(targetPage.contentStyle);
-		} else if (this.state.currentText = "Traditional"){
+		} else if (this.state.currentText == "Traditional"){
 			contentStyle = stringToStyle(targetPage.tradBoxStyles[0]);
-			console.log(contentStyle);
+			//console.log(contentStyle);
 		} else {
 			contentStyle = stringToStyle(targetPage.simpBoxStyles[0]);
-			console.log(contentStyle);
+			//console.log(contentStyle);
 		}
 		if (!isNaN(this.state.bookContentParsed.fontSize)){
 			contentStyle.fontSize = this.state.bookContentParsed.fontSize + "px";
 		}
-		console.log(contentStyle);
+		
 		let targetStyles = null;
 		if (targetPage.textBoxStyles && this.state.currentText != "No text"){
 			targetStyles = targetPage.textBoxStyles.map(thisStyle => {
@@ -478,7 +603,10 @@ export default class BookContainer extends React.Component {
 						if (!this.state.currentPinyin){
 							renderedSentence = renderedSentence.replace(/<rt>.*?<\/rt>/g, "");
 						}
-						console.log(renderedSentence);
+						if (this.state.redText && this.state.currentAudio != "No_audio"){
+							let redReg = new RegExp("span id='w" + this.state.redText + "'", "g");
+							renderedSentence = renderedSentence.replace(redReg, "span id='w" + this.state.redText + "' style='color: red' ");
+						}
 						return(
 						<span dangerouslySetInnerHTML={{__html: renderedSentence}}/>
 						);
@@ -487,6 +615,7 @@ export default class BookContainer extends React.Component {
 				targetStyles[boxIndex].position = "relative";
 				targetStyles[boxIndex].textAlign = "left";
 				targetStyles[boxIndex].background = "rgba(255,255,255,0.5)";
+				targetStyles[boxIndex].margin = "10px";
 				targetStyles[boxIndex].borderRadius = "25px";
 				return (
 				<div style={targetStyles[boxIndex]}>
@@ -495,10 +624,17 @@ export default class BookContainer extends React.Component {
 				);
 			});
 		}
-		console.log(renderedTextBoxes);
+
 		contentStyle.display = "inline-block";
+		let renderedImages = null;
+		if (targetPage.pictures){
+			renderedImages = targetPage.pictures.map(thisPicture => {
+				return (<span dangerouslySetInnerHTML={{__html: thisPicture}}/>);
+			});
+		}
 		return (
 		<div style={contentStyle}>
+			{renderedImages}
 			{renderedTextBoxes}
 		</div>
 		);
@@ -506,15 +642,7 @@ export default class BookContainer extends React.Component {
 	};
 	
 	
-	
-	testClick = () => {
-		this.renderCurrentPage();
-		return;
-		var check = document.getElementById("currentBook").contentWindow;
-		check.console.log = function(val){
-			alert(val);
-		};
-	};
+
 	
 	finishedReading = () => {
 		let auth = this.getUserInfo().authToken;
@@ -580,12 +708,40 @@ export default class BookContainer extends React.Component {
 	};
 	
 	changePage(input){
+		if (!this.state.bookContentParsed){
+			return;
+		}
 		if (input >= 0 && input < this.state.bookContentParsed.numPages){
 			if (input == this.state.bookContentParsed.numPages - 1 && !this.state.finishedBook){
 				this.finishedReading();
 				this.setState({finishedBook: true,});
 			}
-			this.setState({currentPage: input,});
+			if (this.state.thisPageAudio){
+				this.state.thisPageAudio.pause();
+			}
+			let thisAudio = null;
+			if (this.state.currentAudio == "Mandarin"){
+				console.log("started mandarin");
+				thisAudio = new Audio(this.state.bookContentParsed.pages[input].mandarinAudio);
+			} else if (this.state.currentAudio == "Cantonese"){
+				console.log("started cantonese");
+				thisAudio = new Audio(this.state.bookContentParsed.pages[input].cantoneseAudio);
+			}
+			if (thisAudio){
+				thisAudio.play();
+				thisAudio.addEventListener('loadedmetadata', function(){
+					setTimeout(() => {
+						if (thisAudio.currentTime == thisAudio.duration && this.state.autoplay && this.state.currentAudio != "No_audio"){
+							this.changePage(this.state.currentPage+1);
+						}
+					}, thisAudio.duration*1000 + 200);
+				}.bind(this));
+			}
+			this.setState({currentPage: input, thisPageAudio: thisAudio,}, () => {
+				if (thisAudio){
+					this.startRedTexts(0);
+				}
+			});
 			
 		}
 	};
@@ -609,6 +765,14 @@ export default class BookContainer extends React.Component {
 		return output;
 	};
 	
+	renderQuizButton(){
+		if (this.state.finishedBook){
+			return <img id="quizButton" src={quiz_button} onClick={this.onClickQuizButton}/>
+		} else {
+			return <img id="quizButton" src={quiz_unavailable} onClick={this.onClickQuizButton}/>
+		}
+	};
+	
 	onSelectPage = (event) => {
 		this.changePage(event.target.value);
 	};
@@ -621,6 +785,20 @@ export default class BookContainer extends React.Component {
 			this.props.history.goBack();
 		}
 		this.setState({toPrevPage: true});
+	};
+	
+	onClickQuizButton = () => {
+		if (!this.state.finishedBook){
+			alert("Complete book before starting quiz.");
+			return;
+		}
+		if (this.state.finishedMessage != ""){
+			alert(this.state.finishedMessage);
+		}
+		this.setState({
+			toPrevPage: true,
+			prevPage: this.props.location.pathname.replace("book", "quiz"),
+		});
 	};
 	
 	showSettingsButton = () => {
@@ -637,6 +815,12 @@ export default class BookContainer extends React.Component {
 	};
 	
 	audioOptionChange = (event) => {
+		if (event.target.value == "No_audio"){
+			this.setState({redText: null,});
+			this.state.thisPageAudio.volume = 0;
+		} else {
+			this.state.thisPageAudio.volume = 1;
+		}
 		this.setState({currentAudio: event.target.value});
 	};
 	
@@ -649,6 +833,42 @@ export default class BookContainer extends React.Component {
 	autoplayChange = () => {
 		this.setState({autoplay: !this.state.autoplay,});
 	};
+	
+	startRedTexts(startTime){
+		let targetPage = this.state.bookContentParsed.pages[this.state.currentPage];
+		if (!targetPage.audioStarts){
+			return;
+		}
+		this.setState({redText: null, redStarts: this.state.redStarts + 1}, () => {
+			for (let i = 0; i < targetPage.audioStarts.length; i++){
+				if (startTime > targetPage.audioStarts[i]){
+					continue;
+				}
+				let current = this.state.currentPage;
+				let thisStart = this.state.redStarts;
+				console.log(thisStart);
+				setTimeout(() => {
+					//console.log("Begin: " + current + "-" + (i+1));
+					if (this.state.redText && this.state.redText[0] != current){
+						return;
+					} else if (thisStart == this.state.redStarts) {
+						this.setState({redText: this.state.currentPage + "-" + (i+1),});
+					}
+				}, targetPage.audioStarts[i]*1000
+				);
+			
+				setTimeout(() => {
+					//console.log("End: " + current + "-" + (i+1));
+					if (this.state.redText == current + "-" + (i+1) && thisStart == this.state.redStarts){
+						//console.log("killed by end of " + current + "-" + (i+1));
+						this.setState({redText: null,});
+					}
+				}, targetPage.audioEnds[i]*1000
+				);
+			}
+		});
+	};
+	
 	
 	renderTextOptions(){
 		let output = [];
@@ -692,11 +912,17 @@ export default class BookContainer extends React.Component {
 	
 	render() {
 		if (this.state.userInfo == undefined){
+			if (this.state.thisPageAudio){
+				this.state.thisPageAudio.pause();
+			}
 			return <Redirect push to = {{
 			pathname:"/",
 			}}/>
 		}
 		if (this.state.toPrevPage){
+			if (this.state.thisPageAudio){
+				this.state.thisPageAudio.pause();
+			}
 			return <Redirect push to = {{
 			pathname:this.state.prevPage,
 			}}/>
@@ -712,8 +938,10 @@ export default class BookContainer extends React.Component {
 					<img id="writingButton" src={writing_button} onClick={this.showWritingButton}/>
 					<img id="recordingButton" src={recording_button}/>
 					<img id="bookSettingsButton" src={settings_button} onClick={this.showSettingsButton}/>
+					<img id="bookmarkButton" src={bookmark_button} onClick={this.sendBookmark} />
 					<img id="prevPageButton" src={left_arrow} onClick={() => {this.changePage(this.state.currentPage-1);}}/>
 					<img id="nextPageButton" src={right_arrow} onClick={() => {this.changePage(this.state.currentPage+1);}}/>
+						{this.renderQuizButton()}
 						{this.renderPageSelect()}
 					<div className="topBarText">{this.state.bookInfo.book.bookTitle}</div>
 					
@@ -750,7 +978,7 @@ export default class BookContainer extends React.Component {
 				<div className="bookHolder">
 				{this.renderCurrentPage()}
 				</div>
-				<iframe id="currentBook" className="bookFrame" src={indexUrl}/>
+				
 			</body>
 		);
 	};

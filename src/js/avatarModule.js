@@ -20,7 +20,7 @@ export default class AvatarModule extends React.Component{
 	
 	retrieveAvatarInfo(){
 		let auth = this.props.authToken;
-		auth = "TkhzMGE0fDE1NjY1MTE4NDk5NzR8W1NUVURFTlRdfDU3MTdkNDk0ZTRiMDZhMjBiMTVkYTMwNC43NDZkOTE4OWY0NjkyM2UwNjAxMThkZTVkMTg2ZDlkYWQ0NWZkMDYzNDY4MTJkNDQ5NjkxNjk2NjViZmZhNmFl";
+		//auth = "TkhzMGE0fDE1NjY1MTE4NDk5NzR8W1NUVURFTlRdfDU3MTdkNDk0ZTRiMDZhMjBiMTVkYTMwNC43NDZkOTE4OWY0NjkyM2UwNjAxMThkZTVkMTg2ZDlkYWQ0NWZkMDYzNDY4MTJkNDQ5NjkxNjk2NjViZmZhNmFl";
 		var asy = true;
 		var request = new XMLHttpRequest();
 		request.onload = function () {

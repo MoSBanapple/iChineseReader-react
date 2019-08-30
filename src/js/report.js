@@ -16,6 +16,7 @@ export default class Report extends React.Component{
 	constructor(props){
 		super(props);
 		let info = cookie.load('userInfo', {doNotParse: true});
+		cookie.save('prevPage', this.props.location.pathname, { path: '/'});
 		if (info == undefined){
 			this.state = {
 				userInfo: undefined,

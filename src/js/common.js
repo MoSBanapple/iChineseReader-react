@@ -1,4 +1,4 @@
-export const BASE_URL = "https://api.migration.ichinesereader.com";
+export const BASE_URL = "https://api.ichinesereader.com";
 
 export function makeRequest(type, targetUrl, auth, postBody, returnFunc){
 	alert("ablong");
