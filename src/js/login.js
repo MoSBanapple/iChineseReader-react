@@ -7,9 +7,8 @@
 	import Modal from 'react-modal';
 	
 	
-	function createMarkup() {
-		return {__html: '<button className="orangeButton" onClick={this.loginClick}>Hitme</button>'};
-	}
+
+	
 
     export default class Login extends React.Component {
 
@@ -109,6 +108,7 @@
 	  };
 	  
 	  resetPassEmail = () => {
+		  
 		  var asy = true;
 		  var request = new XMLHttpRequest();
 		  let url = BASE_URL + "/usermanager/resetpassword/email/" + this.state.recoverUsername; 
@@ -118,6 +118,10 @@
 	  };
 	  
 	  resetPassSid = () => {
+		  if (this.state.recoverPass.length < 6 || this.state.recoverPass.length > 50){
+			  alert("Password must be between 6 and 50 characters");
+			  return;
+		  }
 		  var asy = true;
 		  var request = new XMLHttpRequest();
 		  var postBody = JSON.stringify({

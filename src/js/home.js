@@ -122,7 +122,7 @@
 				  nickName: parsed.nickName,
 				  points: parsed.pointsCollected,
 				  booksRead: parsed.numBooks,
-				  level: parsed.playerLevel.levelCode,
+				  level: 2,
 			  });
 		  }.bind(this)
 		  let url = BASE_URL + "/usermanager/profile"; 
