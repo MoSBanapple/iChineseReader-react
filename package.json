@@ -9,7 +9,7 @@
     "css": "^2.2.4",
     "express": "^4.17.1",
     "is-chinese": "^1.2.9",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.19",
     "prop-types": "^15.7.2",
     "react": "^16.9.0",
     "react-bootstrap": "^1.0.0-beta.12",
